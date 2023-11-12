@@ -1,8 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (
-    QGridLayout,
+    QSpacerItem,
     QHBoxLayout,
-    QTableView,
     QWidget,
     QSizePolicy,
     QFrame,
@@ -47,43 +46,43 @@ class TimeEditRow(QWidget):
         self.setLayout(self.layout)
 
 
-class TimespanTableView(QTableView):
-    def __init__(self) -> None:
-        super().__init__()
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QSize(0, 0))
-        self.setFrameShape(QFrame.Panel)
-        self.setObjectName("Timespan Table")
-        self.horizontalHeader().setVisible(False)
-        self.horizontalHeader().setStretchLastSection(True)
-        self.verticalHeader().setVisible(False)
-
-
 class TimespanEditor(QWidget):
     def __init__(self):
         super(TimespanEditor, self).__init__()
         self.rows = []
-        self.layout = QVBoxLayout()
-        self.timespan_tableview = TimespanTableView()
-        self.layout.addWidget(self.timespan_tableview)
+        self.main_layout = QVBoxLayout()
+        self.add_timeedit_container()
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.main_layout.addItem(spacer)
         self.add_buttons()
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
         self.add_time_edit_row()
 
+    def add_timeedit_container(self):
+        self.timeedit_container = QWidget()
+        # self.timeedit_container.setStyleSheet(
+        #     """
+        #     background-color: rgb(35, 35, 35);
+        #     border-radius: 10px;;
+        #     """
+        # )
+        self.timeedit_row_layout = QVBoxLayout()
+        self.timeedit_container.setLayout(self.timeedit_row_layout)
+        self.main_layout.addWidget(self.timeedit_container)
+
     def add_buttons(self):
-        self.button_layout = QHBoxLayout()
-        self.button_layout.setAlignment(Qt.AlignTop)
-        self.button_layout.setSpacing(0)
+        button_container = QWidget()
+        button_layout = QHBoxLayout()
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_layout.setSpacing(0)
         self.add_button = QPushButton("Add")
         self.add_button.clicked.connect(self.add_time_edit_row)
         self.delete_button = QPushButton("Delete")
         self.delete_button.clicked.connect(self.delete_selected_time_edit_row)
-        self.button_layout.addWidget(self.add_button)
-        self.button_layout.addWidget(self.delete_button)
-        self.layout.addLayout(self.button_layout)
+        button_layout.addWidget(self.add_button)
+        button_layout.addWidget(self.delete_button)
+        button_container.setLayout(button_layout)
+        self.main_layout.addWidget(button_container)
 
     def add_time_edit_row(self) -> None:
         if len(self.rows) >= 10:
@@ -93,7 +92,7 @@ class TimespanEditor(QWidget):
         new_row.time_edit2.setTime(QTime.currentTime())
         self.rows.append(new_row)
         # Insert at the bottom
-        self.layout.insertWidget(len(self.layout) - 1, new_row)
+        self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
         self.update_labels()
 
     def delete_selected_time_edit_row(self) -> None:
