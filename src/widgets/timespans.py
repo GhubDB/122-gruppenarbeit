@@ -161,15 +161,15 @@ class TimespanEditor(QWidget):
         for i, row in enumerate(self.rows):
             row.position_label.setText(str(i + 1) + ".")
 
-    def get_total_time_worked(self) -> int:
-        elapsed_time = 0
+    def get_total_time_worked(self) -> QTime:
+        total_elapsed_time = QTime(0, 0)
         for row in self.rows:
             time1 = row.time_edit1.time()
             time2 = row.time_edit2.time()
             time_difference = time1.secsTo(time2)
-            elapsed_time += QTime(0, 0).addSecs(time_difference)
+            total_elapsed_time = total_elapsed_time.addSecs(time_difference)
 
-        return elapsed_time
+        return total_elapsed_time
 
     def validate_time_input(self) -> bool:
         pass
