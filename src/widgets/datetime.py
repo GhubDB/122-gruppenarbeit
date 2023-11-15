@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import QTime, Qt
 
-from src.settings.user_settings import UserSettings
+from src.settings.user_settings import USER_SETTINGS, UserSettings
 
 
 class DatetimeDisplay(QWidget):
@@ -73,13 +73,18 @@ class DatetimeDisplay(QWidget):
 
     def show_hours_worked(self, hours_worked: QTime):
         label_time = hours_worked.toString("hh:mm:ss")
-        # self.elapsed_time.setText(hours_worked)
+        self.elapsed_time.setText("+" + label_time)
 
     def show_hours_remaining(self, hours_worked: QTime):
-        pass
-        # self.remaining_time.setText(
-        #     "-" + UserSettings.target_hours_worked - hours_worked
-        # )
+        remaining_time = hours_worked.secsTo(USER_SETTINGS.get.target_hours_worked)
+        remaining_time_str = self.seconds_to_hhmmss(remaining_time)
+        self.remaining_time.setText("-" + remaining_time_str)
+
+    def seconds_to_hhmmss(self, seconds):
+        m, s = divmod(seconds, 60)
+        h, m = divmod(m, 60)
+        time_str = "{:02}:{:02}:{:02}".format(int(h), int(m), int(s))
+        return time_str
 
 
 if __name__ == "__main__":

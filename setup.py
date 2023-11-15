@@ -9,8 +9,6 @@ setup(
     exclude_package_data={"": [".gitignore"]},
     setup_requires=["setuptools-git"],
     install_requires=[
-        "pandas",
-        "numpy",
         "PyQt5",
         "setuptools",
         "appdirs",

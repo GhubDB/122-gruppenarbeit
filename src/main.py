@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
     QStackedWidget,
 )
 import qtstylish
-from src.settings.user_settings import UserSettings
+from src.settings.user_settings import USER_SETTINGS, UserSettings
 from src.time_management.timekeeper import Timekeeper
 from src.stylesheets.stylesheets import Stylesheets
 from src.widgets.datetime import DatetimeDisplay
@@ -20,17 +20,13 @@ from src.widgets.timespans import TimespanEditor
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.add_user_settings()
+        self.settings = USER_SETTINGS
         self.setup_central_window()
         self.add_splitters()
         self.add_timespan_editor()
         self.add_datetime_display()
         self.setStyleSheet(Stylesheets.custom_dark)
         self.add_timekeeper()
-
-    def add_user_settings(self):
-        pass
-        # self.settings = UserSettings(QTime())
 
     def setup_central_window(self) -> None:
         self.setObjectName("Central Window")
@@ -62,7 +58,7 @@ class MainWindow(QMainWindow):
         self.datetime_splitter.addWidget(self.datetime)
 
     def add_timekeeper(self):
-        self.timekeeper = Timekeeper(self.datetime, self.timespan_editor)
+        self.timekeeper = Timekeeper(self.timespan_editor, self.datetime)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
         mods = event.modifiers()

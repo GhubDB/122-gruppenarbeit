@@ -1,4 +1,5 @@
 import sys
+from typing import NewType
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QSpacerItem,
@@ -35,19 +36,22 @@ class TimeEditRow(QWidget):
         self.start_icon = QIcon(PLAY_BUTTON_PATH)
         self.stop_icon = QIcon(PAUSE_BUTTON_PATH)
         self.layout = QHBoxLayout()
-        self.layout.setContentsMargins(10, 0, 0, 0)
-        self.time_edit1 = QTimeEdit()
-        self.time_edit2 = QTimeEdit()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.add_timeedits()
         self.add_labels()
         self.add_button()
         self.configure_layout()
 
+    def add_timeedits(self):
+        self.time_edit1 = QTimeEdit()
+        self.time_edit1.setDisplayFormat("HH:mm:ss")
+        self.time_edit2 = QTimeEdit()
+        self.time_edit2.setDisplayFormat("HH:mm:ss")
+
     def add_labels(self):
-        self.position_label = QLabel()
         self.from_label = QLabel("From:")
         self.to_label = QLabel("To:")
-        self.position_label.setMaximumWidth(35)
-        self.from_label.setMaximumWidth(50)
+        self.from_label.setMaximumWidth(53)
         self.to_label.setMaximumWidth(50)
 
     def add_button(self):
@@ -60,18 +64,18 @@ class TimeEditRow(QWidget):
         self.start_button.clicked.connect(self.toggle_timer)
 
     def configure_layout(self):
-        self.layout.addWidget(self.position_label)
         self.layout.addWidget(self.from_label)
-        self.layout.addWidget(self.time_edit1)
+        self.layout.addWidget(self.time_edit1, stretch=1)
         self.layout.addWidget(self.to_label)
-        self.layout.addWidget(self.time_edit2)
+        self.layout.addWidget(self.time_edit2, stretch=1)
         self.layout.addWidget(self.start_button)
         self.setLayout(self.layout)
 
     def toggle_timer(self):
+        self.datetime.unset_active_timer(self)
+
         if not self.is_active:
             self.start_button.setIcon(self.stop_icon)
-            self.datetime.unset_active_timer()
             self.datetime.set_active_timer(self)
             self.is_active = True
 
@@ -87,7 +91,7 @@ class TimeEditRow(QWidget):
 
 class TimespanEditor(QWidget):
     def __init__(self):
-        super(TimespanEditor, self).__init__()
+        super().__init__()
         self.add_attributes()
         self.main_layout = QVBoxLayout()
         self.add_timeedit_container()
@@ -110,6 +114,7 @@ class TimespanEditor(QWidget):
         #     """
         # )
         self.timeedit_row_layout = QVBoxLayout()
+        self.timeedit_row_layout.setContentsMargins(0, 0, 0, 0)
         self.timeedit_container.setLayout(self.timeedit_row_layout)
         self.main_layout.addWidget(self.timeedit_container)
 
@@ -136,30 +141,34 @@ class TimespanEditor(QWidget):
         self.rows.append(new_row)
         # Insert at the bottom
         self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
-        self.update_labels()
 
     def delete_selected_time_edit_row(self) -> None:
         for row in self.rows:
-            if row.time_edit1.hasFocus() or row.time_edit2.hasFocus():
+            if (
+                row.time_edit1.hasFocus()
+                or row.time_edit2.hasFocus()
+                and not row == self.active_timer
+            ):
                 self.rows.remove(row)
                 row.deleteLater()
-        self.update_labels()
 
     def set_active_timer(self, timer: TimeEditRow):
+        self.active_timer = timer
+
+    def unset_active_timer(self, sender):
         if self.active_timer == None:
-            self.active_timer = timer
+            return
 
-        else:
-            self.unset_active_timer()
-
-    def unset_active_timer(self):
-        if self.active_timer != None:
+        if self.active_timer != sender:
             self.active_timer.toggle_timer()
-            self.active_timer = None
 
-    def update_labels(self) -> None:
-        for i, row in enumerate(self.rows):
-            row.position_label.setText(str(i + 1) + ".")
+        self.active_timer = None
+
+    def increment_active_timer(self):
+        if self.active_timer == None:
+            return
+
+        self.active_timer.add_one_second()
 
     def get_total_time_worked(self) -> QTime:
         total_elapsed_time = QTime(0, 0)
