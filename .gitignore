@@ -1,5 +1,8 @@
+dist
+build
 /venv
 *__pycache__*
 *.egg-info
 .eggs
 .vscode
+workulator.spec

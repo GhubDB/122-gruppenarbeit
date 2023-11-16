@@ -1,4 +1,5 @@
 import sys
+from os import path
 from typing import NewType
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
@@ -21,11 +22,9 @@ from PyQt5.QtCore import QTime, Qt, QSize
 
 from src.widgets.datetime import DatetimeDisplay
 
-# TODO: Find better path tool
-PAUSE_BUTTON_PATH = "/Users/taadimo2/projects/122-gruppenarbeit/src/assets/pause.png"
-PLAY_BUTTON_PATH = (
-    "/Users/taadimo2/projects/122-gruppenarbeit/src/assets/play-button.png"
-)
+BASE_DIR = path.dirname(path.abspath(__file__))
+PAUSE_BUTTON_PATH = path.join(BASE_DIR, "assets", "pause.png")
+PLAY_BUTTON_PATH = path.join(BASE_DIR, "assets", "play-button.png")
 
 
 class TimeEditRow(QWidget):
@@ -107,12 +106,6 @@ class TimespanEditor(QWidget):
 
     def add_timeedit_container(self):
         self.timeedit_container = QWidget()
-        # self.timeedit_container.setStyleSheet(
-        #     """
-        #     background-color: rgb(35, 35, 35);
-        #     border-radius: 10px;;
-        #     """
-        # )
         self.timeedit_row_layout = QVBoxLayout()
         self.timeedit_row_layout.setContentsMargins(0, 0, 0, 0)
         self.timeedit_container.setLayout(self.timeedit_row_layout)
@@ -123,9 +116,9 @@ class TimespanEditor(QWidget):
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 0, 0, 0)
         button_layout.setSpacing(0)
-        self.add_button = QPushButton("Add")
+        self.add_button = QPushButton("Add Timer")
         self.add_button.clicked.connect(self.add_time_edit_row)
-        self.delete_button = QPushButton("Delete")
+        self.delete_button = QPushButton("Delete Timer")
         self.delete_button.clicked.connect(self.delete_selected_time_edit_row)
         button_layout.addWidget(self.add_button)
         button_layout.addWidget(self.delete_button)

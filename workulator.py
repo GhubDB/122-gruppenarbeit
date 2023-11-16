@@ -1,6 +1,5 @@
 import sys
-import typing
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication,
@@ -9,8 +8,9 @@ from PyQt5.QtWidgets import (
     QWidget,
     QStackedWidget,
 )
-import qtstylish
-from src.settings.user_settings import USER_SETTINGS, UserSettings
+
+# import qtstylish
+from src.settings.user_settings import USER_SETTINGS
 from src.time_management.timekeeper import Timekeeper
 from src.stylesheets.stylesheets import Stylesheets
 from src.widgets.datetime import DatetimeDisplay
@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyleSheet(qtstylish.dark())
+    # app.setStyleSheet(qtstylish.dark())
     win = MainWindow()
     win.resize(420, 250)
     win.show()

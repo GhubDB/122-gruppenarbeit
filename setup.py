@@ -14,7 +14,7 @@ setup(
         "appdirs",
         "pynput",
         "typing-extensions",
-        "qtstylish>=0.1.2",
+        # "qtstylish>=0.1.2",
         "pywin32; platform_system=='Windows'",
         "black",
     ],
