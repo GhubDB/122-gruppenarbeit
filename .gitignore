@@ -6,3 +6,4 @@ build
 .eggs
 .vscode
 workulator.spec
+.DS_Store

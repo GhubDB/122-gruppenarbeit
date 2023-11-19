@@ -7,7 +7,7 @@ Tracking your work-hours with style</h1>
 Run the following command to install the project:
 
 ```text
-pip install 122-gruppenarbeit
+    pip install 122-gruppenarbeit
 ```
 
 ## Development
@@ -34,7 +34,7 @@ Navigate to the root folder of the project in your terminal and install pyinstal
 Build the executable by running:
 
 ```text
-    pyinstaller --onefile workulator.py --noconsole'
+    pyinstaller --onefile workulator.py --noconsole
 ```
 
 The executable file can now be found in your dist folder.

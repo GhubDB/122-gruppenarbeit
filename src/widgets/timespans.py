@@ -1,15 +1,11 @@
 import sys
 from os import path
-from typing import NewType
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QColor, QPalette
 from PyQt5.QtWidgets import (
     QSpacerItem,
     QHBoxLayout,
     QWidget,
     QSizePolicy,
-    QFrame,
-)
-from PyQt5.QtWidgets import (
     QLabel,
     QApplication,
     QWidget,
@@ -19,8 +15,6 @@ from PyQt5.QtWidgets import (
     QTimeEdit,
 )
 from PyQt5.QtCore import QTime, Qt, QSize
-
-from src.widgets.datetime import DatetimeDisplay
 
 BASE_DIR = path.dirname(path.abspath(__file__))
 PAUSE_BUTTON_PATH = path.join(BASE_DIR, "assets", "pause.png")
@@ -35,7 +29,7 @@ class TimeEditRow(QWidget):
         self.start_icon = QIcon(PLAY_BUTTON_PATH)
         self.stop_icon = QIcon(PAUSE_BUTTON_PATH)
         self.layout = QHBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(5, 0, 0, 0)
         self.add_timeedits()
         self.add_labels()
         self.add_button()
@@ -43,24 +37,47 @@ class TimeEditRow(QWidget):
 
     def add_timeedits(self):
         self.time_edit1 = QTimeEdit()
-        self.time_edit1.setDisplayFormat("HH:mm:ss")
         self.time_edit2 = QTimeEdit()
+        self.time_edit2.timeChanged.connect(self.on_time_changed)
+        self.time_edit1.setDisplayFormat("HH:mm:ss")
         self.time_edit2.setDisplayFormat("HH:mm:ss")
+        self.time_edit1.setMinimumHeight(30)
+        self.time_edit2.setMinimumHeight(30)
+
+    def on_time_changed(self, time: QTime):
+        # Restricts users from specifying a "To" time that precedes the "From" time.
+        from_time = self.time_edit1.time()
+        if time.secsTo(from_time) > 0:
+            self.time_edit2.setTime(from_time)
 
     def add_labels(self):
         self.from_label = QLabel("From:")
         self.to_label = QLabel("To:")
         self.from_label.setMaximumWidth(53)
         self.to_label.setMaximumWidth(50)
+        palette = self.from_label.palette()
+        palette.setColor(self.from_label.foregroundRole(), QColor("#68d9fe"))
+        self.from_label.setPalette(palette)
+        palette = self.to_label.palette()
+        palette.setColor(self.to_label.foregroundRole(), QColor("#68d9fe"))
+        self.to_label.setPalette(palette)
 
     def add_button(self):
         self.start_button = QPushButton("", self)
-        self.start_button.setMaximumWidth(30)
-        self.start_button.setMaximumHeight(30)
-        icon_size = QSize(20, 20)
-        self.start_button.setIconSize(icon_size)
-        self.start_button.setIcon(self.start_icon)
+        self.set_button_to_start(self.start_button)
         self.start_button.clicked.connect(self.toggle_timer)
+
+    def set_button_to_start(self, button: QPushButton):
+        button.setText("Start")
+        palette = button.palette()
+        palette.setColor(button.foregroundRole(), QColor("#bdf7bc"))
+        button.setPalette(palette)
+
+    def set_button_to_stop(self, button: QPushButton):
+        button.setText("Stop")
+        palette = button.palette()
+        palette.setColor(button.foregroundRole(), QColor("#f7d5bc"))
+        button.setPalette(palette)
 
     def configure_layout(self):
         self.layout.addWidget(self.from_label)
@@ -74,12 +91,12 @@ class TimeEditRow(QWidget):
         self.datetime.unset_active_timer(self)
 
         if not self.is_active:
-            self.start_button.setIcon(self.stop_icon)
+            self.set_button_to_stop(self.start_button)
             self.datetime.set_active_timer(self)
             self.is_active = True
 
         else:
-            self.start_button.setIcon(self.start_icon)
+            self.set_button_to_start(self.start_button)
             self.is_active = False
 
     def add_one_second(self):
@@ -92,10 +109,7 @@ class TimespanEditor(QWidget):
     def __init__(self):
         super().__init__()
         self.add_attributes()
-        self.main_layout = QVBoxLayout()
         self.add_timeedit_container()
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        self.main_layout.addItem(spacer)
         self.add_buttons()
         self.setLayout(self.main_layout)
         self.add_time_edit_row()
@@ -105,17 +119,19 @@ class TimespanEditor(QWidget):
         self.active_timer = None
 
     def add_timeedit_container(self):
+        self.main_layout = QVBoxLayout()
         self.timeedit_container = QWidget()
         self.timeedit_row_layout = QVBoxLayout()
         self.timeedit_row_layout.setContentsMargins(0, 0, 0, 0)
         self.timeedit_container.setLayout(self.timeedit_row_layout)
         self.main_layout.addWidget(self.timeedit_container)
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.main_layout.addItem(spacer)
 
     def add_buttons(self):
         button_container = QWidget()
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(0)
         self.add_button = QPushButton("Add Timer")
         self.add_button.clicked.connect(self.add_time_edit_row)
         self.delete_button = QPushButton("Delete Timer")
@@ -138,10 +154,8 @@ class TimespanEditor(QWidget):
     def delete_selected_time_edit_row(self) -> None:
         for row in self.rows:
             if (
-                row.time_edit1.hasFocus()
-                or row.time_edit2.hasFocus()
-                and not row == self.active_timer
-            ):
+                row.time_edit1.hasFocus() or row.time_edit2.hasFocus()
+            ) and not row == self.active_timer:
                 self.rows.remove(row)
                 row.deleteLater()
 

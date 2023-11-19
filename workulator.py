@@ -8,11 +8,8 @@ from PyQt5.QtWidgets import (
     QWidget,
     QStackedWidget,
 )
-
-# import qtstylish
 from src.settings.user_settings import USER_SETTINGS
 from src.time_management.timekeeper import Timekeeper
-from src.stylesheets.stylesheets import Stylesheets
 from src.widgets.datetime import DatetimeDisplay
 from src.widgets.timespans import TimespanEditor
 
@@ -25,22 +22,19 @@ class MainWindow(QMainWindow):
         self.add_splitters()
         self.add_timespan_editor()
         self.add_datetime_display()
-        self.setStyleSheet(Stylesheets.custom_dark)
         self.add_timekeeper()
 
     def setup_central_window(self) -> None:
         self.setObjectName("Central Window")
         self.central_widget = QWidget(self)
+        self.setMaximumWidth(413)
         self.setCentralWidget(self.central_widget)
-
         self.central_grid = QGridLayout(self.central_widget)
         self.central_grid.setObjectName("Central Grid")
-
         self.central_stacked_widget = QStackedWidget(self.central_widget)
         self.central_stacked_widget.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.central_stacked_widget.setLineWidth(0)
         self.central_stacked_widget.setObjectName("Central Stacked Widget")
-
         self.central_grid.addWidget(self.central_stacked_widget, 0, 0, 1, 1)
 
     def add_splitters(self) -> None:
@@ -61,12 +55,13 @@ class MainWindow(QMainWindow):
         self.timekeeper = Timekeeper(self.timespan_editor, self.datetime)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
+        # Add Hotkeys
         mods = event.modifiers()
 
-        if event.key() == Qt.Key_N:
+        if event.key() == Qt.Key_N and (mods & Qt.ControlModifier):
             self.timespan_editor.add_time_edit_row()
 
-        elif Qt.Key_G and (mods & Qt.ControlModifier):
+        elif event.key() in [Qt.Key_Delete, Qt.Key_D] and (mods & Qt.ControlModifier):
             self.timespan_editor.delete_selected_time_edit_row()
 
         return super().keyPressEvent(event)
@@ -74,7 +69,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # app.setStyleSheet(qtstylish.dark())
     win = MainWindow()
     win.resize(420, 250)
     win.show()
