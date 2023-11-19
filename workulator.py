@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         if event.key() == Qt.Key_N and (mods & Qt.ControlModifier):
             self.timespan_editor.add_time_edit_row()
 
-        elif event.key() in [Qt.Key_Delete, Qt.Key_D] and (mods & Qt.ControlModifier):
+        elif event.key() == Qt.Key_D and (mods & Qt.ControlModifier):
             self.timespan_editor.delete_selected_time_edit_row()
 
         return super().keyPressEvent(event)

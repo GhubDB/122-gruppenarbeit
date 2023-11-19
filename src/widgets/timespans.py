@@ -133,8 +133,12 @@ class TimespanEditor(QWidget):
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 0, 0, 0)
         self.add_button = QPushButton("Add Timer")
-        self.add_button.clicked.connect(self.add_time_edit_row)
         self.delete_button = QPushButton("Delete Timer")
+        self.add_button.setToolTip("Ctrl / Cmd + N")
+        self.delete_button.setToolTip("Ctrl / Cmd + D")
+        self.add_button.setMinimumHeight(35)
+        self.delete_button.setMinimumHeight(35)
+        self.add_button.clicked.connect(self.add_time_edit_row)
         self.delete_button.clicked.connect(self.delete_selected_time_edit_row)
         button_layout.addWidget(self.add_button)
         button_layout.addWidget(self.delete_button)
@@ -186,11 +190,6 @@ class TimespanEditor(QWidget):
             total_elapsed_time = total_elapsed_time.addSecs(time_difference)
 
         return total_elapsed_time
-
-    def validate_time_input(self) -> bool:
-        pass
-        # If timespans overlap -> not valid
-        # If from > to -> not valid
 
 
 if __name__ == "__main__":
