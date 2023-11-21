@@ -75,6 +75,7 @@ class TimeEditRow(QWidget):
         self.delete_button.setToolTip("Ctrl / Cmd + D")
         self.delete_button.clicked.connect(self.delete_row)
         self.start_button = QPushButton("", self)
+        self.start_button.setToolTip("Ctrl / Cmd + S")
         self.start_button.clicked.connect(self.toggle_timer)
         self.start_button.setMinimumHeight(25)
         self.set_button_to_start(self.start_button)
@@ -130,5 +131,8 @@ class TimeEditRow(QWidget):
 
         if event.key() == Qt.Key_D and (mods & Qt.ControlModifier):
             self.delete_row()
+
+        if event.key() == Qt.Key_S and (mods & Qt.ControlModifier):
+            self.toggle_timer()
 
         return super().keyPressEvent(event)
