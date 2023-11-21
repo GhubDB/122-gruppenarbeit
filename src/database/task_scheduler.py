@@ -1,14 +1,8 @@
-from os import path
 import os
 import subprocess
 import schedule
 import threading
 import time
-
-
-# BASE_DIR = path.dirname(path.abspath(__file__))
-# PAUSE_BUTTON_PATH = path.join(BASE_DIR, "assets", "pause.png")
-# PLAY_BUTTON_PATH = path.join(BASE_DIR, "assets", "play-button.png")
 
 
 def backup_database():

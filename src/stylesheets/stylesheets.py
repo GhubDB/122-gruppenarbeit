@@ -75,9 +75,7 @@ class Stylesheets:
 		Available at: https://github.com/GTRONICK/QSS/blob/master/ElegantDark.qss
 		*/
 		QMainWindow {
-			background-image: url("/Users/taadimo2/projects/122-gruppenarbeit/src/widgets/w.jpg"); 
-			background-repeat: no-repeat; 
-			background-position: center top;
+			background-color:rgb(40, 40, 40);
 		}
 		QTableView {
 			background-color:rgb(40, 40, 40);

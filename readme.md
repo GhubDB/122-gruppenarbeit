@@ -15,7 +15,7 @@ Run the following command to install the project:
 It is recommended that the project is installed in a virtual environment.
 
 - instructions for mac: <https://sourabhbajaj.com/mac-setup/Python/virtualenv.html>
-- instructions for pc:
+- instructions for pc: <https://python.land/virtual-environments/virtualenv>
 
 Run the following command to install the package in development mode:
 

@@ -35,7 +35,7 @@ class DatetimeDisplay(QWidget):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.setSizePolicy(sizePolicy)
-        self.setMaximumHeight(210)
+        # self.setMaximumHeight(210)
         self.setLayout(self.layout)
 
     def add_statusbar(self):
@@ -48,8 +48,12 @@ class DatetimeDisplay(QWidget):
         self.layout.addWidget(container)
 
     def add_date_edit(self):
+        container = QWidget()
+        date_edit_layout = QHBoxLayout(container)
+        date_edit_layout.setContentsMargins(0, 0, 0, 0)
+        container.setLayout(date_edit_layout)
         date = QLabel("Date:")
-        date.setMaximumWidth(33)
+        date.setMaximumWidth(53)
         palette = date.palette()
         palette.setColor(date.foregroundRole(), QColor("#68d9fe"))
         date.setPalette(palette)
@@ -57,11 +61,17 @@ class DatetimeDisplay(QWidget):
         date_edit.setMinimumDate(QDate.currentDate().addDays(-9365))
         date_edit.setMaximumDate(QDate.currentDate().addDays(9365))
         date_edit.setDisplayFormat("dd.MM.yyyy")
-        self.statusbar_layout.addWidget(date)
-        self.statusbar_layout.addWidget(date_edit)
+        date_edit_layout.addWidget(date)
+        date_edit_layout.addWidget(date_edit)
+        self.statusbar_layout.addWidget(container)
 
     def add_target_workhours_edit(self):
+        container = QWidget()
+        target_workhours_layout = QHBoxLayout(container)
+        target_workhours_layout.setContentsMargins(0, 0, 0, 0)
+        container.setLayout(target_workhours_layout)
         target_hours = QLabel("Target Hours:")
+        # target_hours.setStyleSheet("QLabel: {color: #68d9fe;} ")
         palette = target_hours.palette()
         palette.setColor(target_hours.foregroundRole(), QColor("#68d9fe"))
         target_hours.setPalette(palette)
@@ -72,8 +82,9 @@ class DatetimeDisplay(QWidget):
             USER_SETTINGS.set_target_hours_worked
         )
         self.statusbar_layout.addItem(spacer)
-        self.statusbar_layout.addWidget(target_hours)
-        self.statusbar_layout.addWidget(self.target_hours_worked_edit)
+        target_workhours_layout.addWidget(target_hours)
+        target_workhours_layout.addWidget(self.target_hours_worked_edit)
+        self.statusbar_layout.addWidget(container)
 
     def add_current_time(self) -> None:
         font = QFont("Arial", 90, QFont.Bold)
@@ -83,7 +94,7 @@ class DatetimeDisplay(QWidget):
         palette.setColor(self.current_time.foregroundRole(), QColor("#68d9fe"))
         self.current_time.setPalette(palette)
         self.current_time.setFont(font)
-        self.current_time.setStyleSheet("background: transparent;")
+        # self.current_time.setStyleSheet("background: transparent;")
         self.layout.addWidget(self.current_time)
 
     def add_elapsed_and_remaining_time(self) -> None:
@@ -91,7 +102,7 @@ class DatetimeDisplay(QWidget):
         h_layout = QHBoxLayout()
         h_layout.setContentsMargins(0, 0, 0, 0)
         self.elapsed_and_remaining.setLayout(h_layout)
-        self.elapsed_and_remaining.setStyleSheet("background: transparent;")
+        # self.elapsed_and_remaining.setStyleSheet("background: transparent;")
         self.add_elapsed_time(h_layout)
         self.add_remaining_time(h_layout)
         self.layout.addWidget(self.elapsed_and_remaining)

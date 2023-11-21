@@ -20,7 +20,7 @@ class TimespanEditor(QWidget):
         super().__init__()
         self.add_attributes()
         self.add_timeedit_container()
-        self.add_buttons()
+        self.add_button()
         self.setLayout(self.main_layout)
         self.add_time_edit_row()
 
@@ -38,20 +38,15 @@ class TimespanEditor(QWidget):
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.main_layout.addItem(spacer)
 
-    def add_buttons(self):
+    def add_button(self):
         button_container = QWidget()
         button_layout = QHBoxLayout()
-        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_layout.setContentsMargins(0, 5, 0, 0)
         self.add_button = QPushButton("Add Timer")
-        self.delete_button = QPushButton("Delete Timer")
         self.add_button.setToolTip("Ctrl / Cmd + N")
-        self.delete_button.setToolTip("Ctrl / Cmd + D")
         self.add_button.setMinimumHeight(35)
-        self.delete_button.setMinimumHeight(35)
         self.add_button.clicked.connect(self.add_time_edit_row)
-        self.delete_button.clicked.connect(self.delete_selected_time_edit_row)
         button_layout.addWidget(self.add_button)
-        button_layout.addWidget(self.delete_button)
         button_container.setLayout(button_layout)
         self.main_layout.addWidget(button_container)
 
@@ -64,14 +59,6 @@ class TimespanEditor(QWidget):
         self.rows.append(new_row)
         # Insert at the bottom
         self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
-
-    def delete_selected_time_edit_row(self) -> None:
-        for row in self.rows:
-            if (
-                row.time_edit1.hasFocus() or row.time_edit2.hasFocus()
-            ) and not row == self.active_timer:
-                self.rows.remove(row)
-                row.deleteLater()
 
     def set_active_timer(self, timer: TimeEditRow):
         self.active_timer = timer

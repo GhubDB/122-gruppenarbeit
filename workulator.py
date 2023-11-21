@@ -1,17 +1,20 @@
 import sys
-from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import (
+    QFrame,
     QApplication,
     QGridLayout,
+    QVBoxLayout,
     QMainWindow,
     QWidget,
     QStackedWidget,
 )
 from src.settings.user_settings import USER_SETTINGS
+from src.stylesheets.stylesheets import Stylesheets
 from src.time_management.timekeeper import Timekeeper
 from src.widgets.datetime_display import DatetimeDisplay
-from src.widgets.timespans import TimespanEditor
+from src.widgets.timespan_editor import TimespanEditor
 
 
 class MainWindow(QMainWindow):
@@ -20,8 +23,8 @@ class MainWindow(QMainWindow):
         self.settings = USER_SETTINGS
         self.setup_central_window()
         self.add_splitters()
-        self.add_timespan_editor()
         self.add_datetime_display()
+        self.add_timespan_editor()
         self.add_timekeeper()
 
     def setup_central_window(self) -> None:
@@ -32,43 +35,52 @@ class MainWindow(QMainWindow):
         self.central_grid = QGridLayout(self.central_widget)
         self.central_grid.setObjectName("Central Grid")
         self.central_stacked_widget = QStackedWidget(self.central_widget)
-        self.central_stacked_widget.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.central_stacked_widget.setFrameShape(QFrame.NoFrame)
         self.central_stacked_widget.setLineWidth(0)
         self.central_stacked_widget.setObjectName("Central Stacked Widget")
         self.central_grid.addWidget(self.central_stacked_widget, 0, 0, 1, 1)
 
     def add_splitters(self) -> None:
-        self.timespan_splitter = QtWidgets.QSplitter(Qt.Vertical)
-        self.datetime_splitter = QtWidgets.QSplitter(Qt.Horizontal)
-        self.central_stacked_widget.addWidget(self.timespan_splitter)
-        self.timespan_splitter.addWidget(self.datetime_splitter)
+        self.app_container = QWidget()
+        self.app_container_layout = QVBoxLayout()
+        self.app_container_layout.setContentsMargins(0, 0, 0, 0)
+        self.central_stacked_widget.addWidget(self.app_container)
+        self.app_container.setLayout(self.app_container_layout)
 
     def add_timespan_editor(self) -> None:
+        self.timespan_editor_container = QWidget()
+        container_layout = QVBoxLayout()
+        container_layout.setContentsMargins(0, 0, 0, 0)
         self.timespan_editor = TimespanEditor()
-        self.timespan_splitter.addWidget(self.timespan_editor)
+        container_layout.addWidget(self.timespan_editor)
+        self.timespan_editor_container.setLayout(container_layout)
+        self.app_container_layout.addWidget(self.timespan_editor_container)
 
     def add_datetime_display(self) -> None:
+        self.datetime_display_container = QWidget()
+        container_layout = QVBoxLayout()
+        container_layout.setContentsMargins(0, 0, 0, 0)
         self.datetime = DatetimeDisplay()
-        self.datetime_splitter.addWidget(self.datetime)
+        container_layout.addWidget(self.datetime)
+        self.datetime_display_container.setLayout(container_layout)
+        self.app_container_layout.addWidget(self.datetime_display_container)
 
     def add_timekeeper(self):
         self.timekeeper = Timekeeper(self.timespan_editor, self.datetime)
 
-    def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
+    def keyPressEvent(self, event: QKeyEvent | None) -> None:
         # Add Hotkeys
         mods = event.modifiers()
 
         if event.key() == Qt.Key_N and (mods & Qt.ControlModifier):
             self.timespan_editor.add_time_edit_row()
 
-        elif event.key() == Qt.Key_D and (mods & Qt.ControlModifier):
-            self.timespan_editor.delete_selected_time_edit_row()
-
         return super().keyPressEvent(event)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(Stylesheets.elegantdark)
     win = MainWindow()
     win.resize(420, 250)
     win.show()
