@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 import sys
 from PyQt5.QtWidgets import (
     QSpacerItem,
@@ -11,10 +10,12 @@ from PyQt5.QtWidgets import (
     QDateTimeEdit,
     QTimeEdit,
 )
-from PyQt5.QtGui import QFont, QColor, QPixmap
+from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import QTime, Qt, QDate
 
-from src.settings.user_settings import USER_SETTINGS, UserSettings
+from src.settings.user_settings import USER_SETTINGS
+from src.time_management.helpers import seconds_to_hhmmss
+from src.widgets.label import Label
 
 
 class DatetimeDisplay(QWidget):
@@ -66,6 +67,7 @@ class DatetimeDisplay(QWidget):
         target_hours.setPalette(palette)
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.target_hours_worked_edit = QTimeEdit(USER_SETTINGS.get.target_hours_worked)
+        self.target_hours_worked_edit.setMinimumHeight(25)
         self.target_hours_worked_edit.timeChanged.connect(
             USER_SETTINGS.set_target_hours_worked
         )
@@ -133,45 +135,10 @@ class DatetimeDisplay(QWidget):
             USER_SETTINGS.get.target_hours_worked
         )
         if self.seconds_remaining >= 0:
-            remaining_time_str = self.seconds_to_hhmmss(self.seconds_remaining)
+            remaining_time_str = seconds_to_hhmmss(self.seconds_remaining)
         else:
             remaining_time_str = "00:00:00"
         self.remaining_time.setText("-" + remaining_time_str)
-
-    def seconds_to_hhmmss(self, seconds):
-        m, s = divmod(seconds, 60)
-        h, m = divmod(m, 60)
-        time_str = "{:02}:{:02}:{:02}".format(int(h), int(m), int(s))
-        return time_str
-
-    def get_target_hour(self):
-        current_time = datetime.now()
-        if 0 > self.seconds_remaining:
-            target_time = current_time - timedelta(seconds=self.seconds_remaining)
-        else:
-            target_time = current_time + timedelta(seconds=self.seconds_remaining)
-        target_time_str = target_time.strftime("%H:%M")
-        return "To: " + target_time_str
-
-
-class Label(QLabel):
-    def __init__(self, parent: DatetimeDisplay, *args, **kwargs):
-        QLabel.__init__(self, *args, **kwargs)
-        self.date_time_display: DatetimeDisplay = parent
-        self.hover = False
-
-    def enterEvent(self, event):
-        self.setText(self.date_time_display.get_target_hour())
-        self.hover = True
-
-    def leaveEvent(self, event):
-        self.hover = False
-
-    def setText(self, args):
-        if self.hover:
-            return
-
-        super().setText(args)
 
 
 if __name__ == "__main__":

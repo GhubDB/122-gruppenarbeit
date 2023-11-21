@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
 )
 from src.settings.user_settings import USER_SETTINGS
 from src.time_management.timekeeper import Timekeeper
-from src.widgets.datetime import DatetimeDisplay
+from src.widgets.datetime_display import DatetimeDisplay
 from src.widgets.timespans import TimespanEditor
 
 

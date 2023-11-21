@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QTimer, QObject
 from src.settings.user_settings import USER_SETTINGS
 
-from src.widgets.datetime import DatetimeDisplay
+from src.widgets.datetime_display import DatetimeDisplay
 from src.widgets.timespans import TimespanEditor
 
 
