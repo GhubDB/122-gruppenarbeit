@@ -9,6 +9,7 @@ def seconds_to_hhmmss(seconds):
 
 
 def get_target_hour(seconds_remaining):
+    # TODO: Fix calculation
     current_time = datetime.now()
     if 0 > seconds_remaining:
         target_time = current_time - timedelta(seconds=seconds_remaining)
