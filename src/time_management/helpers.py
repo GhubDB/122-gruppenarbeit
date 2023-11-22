@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from PyQt5.QtCore import QTime
 
 
 def seconds_to_hhmmss(seconds):

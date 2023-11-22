@@ -137,14 +137,16 @@ class DatetimeDisplay(QWidget):
         label_time = current_time.toString("hh:mm:ss")
         self.current_time.setText(label_time)
 
-    def show_hours_worked(self, hours_worked: QTime):
-        label_time = hours_worked.toString("hh:mm:ss")
+    def show_hours_worked(self, hours_worked: int):
+        label_time = seconds_to_hhmmss(hours_worked)
         self.elapsed_time.setText("+" + label_time)
 
-    def show_hours_remaining(self, hours_worked: QTime):
-        self.seconds_remaining = hours_worked.secsTo(
-            USER_SETTINGS.get.target_hours_worked
-        )
+    def show_hours_remaining(self, hours_worked: int):
+        target_hours = QTime(0, 0).secsTo(USER_SETTINGS.get.target_hours_worked)
+        self.seconds_remaining = target_hours - hours_worked
+
+        print(self.seconds_remaining)
+
         if self.seconds_remaining >= 0:
             remaining_time_str = seconds_to_hhmmss(self.seconds_remaining)
         else:

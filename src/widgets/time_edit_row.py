@@ -27,6 +27,7 @@ class TimeEditRow(QWidget):
 
     def on_time_changed(self, time: QTime):
         # Restricts users from specifying a "To" time that precedes the "From" time.
+        # TODO: also prevent users from selecting a from time that exceeds the to time
         from_time = self.time_edit1.time()
         if time.secsTo(from_time) > 0:
             self.time_edit2.setTime(from_time)

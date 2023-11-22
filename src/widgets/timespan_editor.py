@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import sys
 from PyQt5.QtWidgets import (
     QSpacerItem,
@@ -13,6 +14,12 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QTime
 
 from src.widgets.time_edit_row import TimeEditRow
+
+
+@dataclass
+class TimeDTO:
+    total_time_worked: int
+    latest_time_worked: int
 
 
 class TimespanEditor(QWidget):
@@ -79,14 +86,36 @@ class TimespanEditor(QWidget):
         self.active_timer.add_one_second()
 
     def get_total_time_worked(self) -> QTime:
-        total_elapsed_time = QTime(0, 0)
-        for row in self.rows:
-            time1 = row.time_edit1.time()
-            time2 = row.time_edit2.time()
-            time_difference = time1.secsTo(time2)
-            total_elapsed_time = total_elapsed_time.addSecs(time_difference)
+        row_tuples = tuple(
+            (
+                QTime(0, 0).secsTo(row.time_edit1.time()),
+                QTime(0, 0).secsTo(row.time_edit2.time()),
+            )
+            for row in self.rows
+        )
+        sorted_rows = sorted(row_tuples, key=lambda row: row[0])
 
-        return total_elapsed_time
+        for i, row in enumerate(sorted_rows):
+            print(i, row[0])
+            print(i, row[1])
+
+        minStart = sorted_rows[0][0]
+        maxEnd = sorted_rows[0][0]
+        gap = 0
+
+        for i, row in enumerate(sorted_rows):
+            #  If there is a gap, increment total gap length
+            if sorted_rows[i][0] > maxEnd:
+                gap = gap + sorted_rows[i][0] - maxEnd
+
+            # Update latest end time
+            if sorted_rows[i][1] > maxEnd:
+                maxEnd = sorted_rows[i][1]
+
+        print("min", minStart, "max", maxEnd, "gap", gap)
+        print("total", maxEnd - minStart - gap)
+
+        return maxEnd - minStart - gap
 
 
 if __name__ == "__main__":
