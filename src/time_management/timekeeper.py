@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QTimer, QObject
 from src.settings.user_settings import USER_SETTINGS
+from src.time_management.time_dto import TimeDTO
 
 from src.widgets.datetime_display import DatetimeDisplay
 from src.widgets.timespan_editor import TimespanEditor
@@ -29,8 +30,8 @@ class Timekeeper(QObject):
         self.timer.disconnect(method)
 
     def push_time_to_datetime_display(self):
-        total_time_worked = self.timespan_editor.get_total_time_worked()
-        self.datetime_display.update_time_display(total_time_worked)
+        time_dto: TimeDTO = self.timespan_editor.get_time_dto()
+        self.datetime_display.update_time_display(time_dto)
 
     def increment_active_timer(self):
         self.timespan_editor.increment_active_timer()

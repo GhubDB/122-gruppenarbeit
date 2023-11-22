@@ -15,6 +15,7 @@ from PyQt5.QtCore import QTime, Qt, QDate
 
 from src.settings.user_settings import USER_SETTINGS
 from src.time_management.helpers import seconds_to_hhmmss
+from src.time_management.time_dto import TimeDTO
 from src.widgets.label import Label
 
 
@@ -127,26 +128,25 @@ class DatetimeDisplay(QWidget):
         self.remaining_time.setFont(font)
         layout.addWidget(self.remaining_time)
 
-    def update_time_display(self, hours_worked):
+    def update_time_display(self, time_dto: TimeDTO):
+        self.latest_time_worked = time_dto.latest_time_worked
+        self.seconds_remaining = time_dto.seconds_remaining
+        self.total_time_worked = time_dto.total_time_worked
+
         self.show_current_time()
-        self.show_hours_worked(hours_worked)
-        self.show_hours_remaining(hours_worked)
+        self.show_hours_worked()
+        self.show_hours_remaining()
 
     def show_current_time(self) -> None:
         current_time = QTime.currentTime()
         label_time = current_time.toString("hh:mm:ss")
         self.current_time.setText(label_time)
 
-    def show_hours_worked(self, hours_worked: int):
-        label_time = seconds_to_hhmmss(hours_worked)
+    def show_hours_worked(self):
+        label_time = seconds_to_hhmmss(self.total_time_worked)
         self.elapsed_time.setText("+" + label_time)
 
-    def show_hours_remaining(self, hours_worked: int):
-        target_hours = QTime(0, 0).secsTo(USER_SETTINGS.get.target_hours_worked)
-        self.seconds_remaining = target_hours - hours_worked
-
-        print(self.seconds_remaining)
-
+    def show_hours_remaining(self):
         if self.seconds_remaining >= 0:
             remaining_time_str = seconds_to_hhmmss(self.seconds_remaining)
         else:

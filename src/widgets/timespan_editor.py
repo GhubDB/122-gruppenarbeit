@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import sys
 from PyQt5.QtWidgets import (
     QSpacerItem,
@@ -12,14 +11,10 @@ from PyQt5.QtWidgets import (
     QPushButton,
 )
 from PyQt5.QtCore import QTime
+from src.settings.user_settings import USER_SETTINGS
+from src.time_management.time_dto import TimeDTO
 
 from src.widgets.time_edit_row import TimeEditRow
-
-
-@dataclass
-class TimeDTO:
-    total_time_worked: int
-    latest_time_worked: int
 
 
 class TimespanEditor(QWidget):
@@ -86,18 +81,15 @@ class TimespanEditor(QWidget):
         self.active_timer.add_one_second()
 
     def get_total_time_worked(self) -> QTime:
-        row_tuples = tuple(
+        zero_time = QTime(0, 0)
+        row_tuples = [
             (
-                QTime(0, 0).secsTo(row.time_edit1.time()),
-                QTime(0, 0).secsTo(row.time_edit2.time()),
+                zero_time.secsTo(row.time_edit1.time()),
+                zero_time.secsTo(row.time_edit2.time()),
             )
             for row in self.rows
-        )
+        ]
         sorted_rows = sorted(row_tuples, key=lambda row: row[0])
-
-        for i, row in enumerate(sorted_rows):
-            print(i, row[0])
-            print(i, row[1])
 
         minStart = sorted_rows[0][0]
         maxEnd = sorted_rows[0][0]
@@ -112,10 +104,29 @@ class TimespanEditor(QWidget):
             if sorted_rows[i][1] > maxEnd:
                 maxEnd = sorted_rows[i][1]
 
-        print("min", minStart, "max", maxEnd, "gap", gap)
-        print("total", maxEnd - minStart - gap)
-
         return maxEnd - minStart - gap
+
+    def get_latest_time_worked(self) -> QTime:
+        zero_time = QTime(0, 0)
+        max_time_in_seconds = 0
+        end_times = [zero_time.secsTo(row.time_edit2.time()) for row in self.rows]
+        for time_in_seconds in end_times:
+            if time_in_seconds > max_time_in_seconds:
+                max_time_in_seconds = time_in_seconds
+
+        return max_time_in_seconds
+
+    def get_time_dto(self) -> TimeDTO:
+        total_time_worked = self.get_total_time_worked()
+        target_hours_worked_in_sedconds = QTime(0, 0).secsTo(
+            USER_SETTINGS.get.target_hours_worked
+        )
+        seconds_left_to_work = target_hours_worked_in_sedconds - total_time_worked
+        return TimeDTO(
+            total_time_worked=total_time_worked,
+            latest_time_worked=self.get_latest_time_worked(),
+            seconds_remaining=seconds_left_to_work,
+        )
 
 
 if __name__ == "__main__":

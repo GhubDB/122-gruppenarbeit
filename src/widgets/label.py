@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QLabel
 
-from src.time_management.helpers import get_target_hour
+from src.time_management.helpers import seconds_to_hhmm
 
 
 class Label(QLabel):
@@ -10,7 +10,11 @@ class Label(QLabel):
         self.hover = False
 
     def enterEvent(self, event):
-        self.setText(get_target_hour(self.date_time_display.seconds_remaining))
+        target_hour = seconds_to_hhmm(
+            self.date_time_display.seconds_remaining
+            + self.date_time_display.latest_time_worked
+        )
+        self.setText("To: " + target_hour)
         self.hover = True
 
     def leaveEvent(self, event):
