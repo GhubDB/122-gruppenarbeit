@@ -30,7 +30,7 @@ class DatetimeDisplay(QWidget):
         self.add_elapsed_and_remaining_time()
         self.show_current_time()
 
-    def add_layout(self):
+    def add_layout(self) -> None:
         self.layout = QVBoxLayout()
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -39,7 +39,7 @@ class DatetimeDisplay(QWidget):
         # self.setMaximumHeight(210)
         self.setLayout(self.layout)
 
-    def add_statusbar(self):
+    def add_statusbar(self) -> None:
         container = QWidget()
         self.statusbar_layout = QHBoxLayout()
         self.statusbar_layout.setContentsMargins(0, 0, 0, 0)
@@ -48,7 +48,7 @@ class DatetimeDisplay(QWidget):
         container.setLayout(self.statusbar_layout)
         self.layout.addWidget(container)
 
-    def add_date_edit(self):
+    def add_date_edit(self) -> None:
         container = QWidget()
         date_edit_layout = QHBoxLayout(container)
         date_edit_layout.setContentsMargins(0, 0, 0, 0)
@@ -66,7 +66,7 @@ class DatetimeDisplay(QWidget):
         date_edit_layout.addWidget(date_edit)
         self.statusbar_layout.addWidget(container)
 
-    def add_target_workhours_edit(self):
+    def add_target_workhours_edit(self) -> None:
         container = QWidget()
         target_workhours_layout = QHBoxLayout(container)
         target_workhours_layout.setContentsMargins(0, 0, 0, 0)
@@ -142,11 +142,11 @@ class DatetimeDisplay(QWidget):
         label_time = current_time.toString("hh:mm:ss")
         self.current_time.setText(label_time)
 
-    def show_hours_worked(self):
+    def show_hours_worked(self) -> None:
         label_time = seconds_to_hhmmss(self.total_time_worked)
         self.elapsed_time.setText("+" + label_time)
 
-    def show_hours_remaining(self):
+    def show_hours_remaining(self) -> None:
         if self.seconds_remaining >= 0:
             remaining_time_str = seconds_to_hhmmss(self.seconds_remaining)
         else:

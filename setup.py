@@ -16,5 +16,6 @@ setup(
         "typing-extensions",
         "black",
         "schedule",
+        "pytest",
     ],
 )

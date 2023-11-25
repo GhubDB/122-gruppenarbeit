@@ -14,8 +14,10 @@ from PyQt5.QtCore import QTime
 
 
 class TimeEditRow(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, from_time=None, to_time=None):
         super(TimeEditRow, self).__init__()
+        self.from_time: int = from_time
+        self.to_time: int = to_time
         self.datetime = parent
         self.is_active = False
         self.row_layout = QHBoxLayout()
@@ -24,15 +26,9 @@ class TimeEditRow(QWidget):
         self.add_from_time_editor()
         self.add_to_time_editor()
         self.add_buttons()
+        self.set_times()
 
-    def on_time_changed(self, time: QTime):
-        # Restricts users from specifying a "To" time that precedes the "From" time.
-        # TODO: also prevent users from selecting a from time that exceeds the to time
-        from_time = self.time_edit1.time()
-        if time.secsTo(from_time) > 0:
-            self.time_edit2.setTime(from_time)
-
-    def add_from_time_editor(self):
+    def add_from_time_editor(self) -> None:
         from_container = QWidget()
         from_layout = QHBoxLayout(from_container)
         from_layout.setContentsMargins(0, 0, 0, 0)
@@ -43,13 +39,14 @@ class TimeEditRow(QWidget):
         palette.setColor(from_label.foregroundRole(), QColor("#68d9fe"))
         from_label.setPalette(palette)
         from_layout.addWidget(from_label)
-        self.time_edit1 = QTimeEdit()
-        self.time_edit1.setDisplayFormat("HH:mm:ss")
-        self.time_edit1.setMinimumHeight(25)
-        from_layout.addWidget(self.time_edit1)
+        self.from_time_edit = QTimeEdit()
+        self.from_time_edit.setDisplayFormat("HH:mm:ss")
+        self.from_time_edit.setMinimumHeight(25)
+        self.from_time_edit.timeChanged.connect(self.on_from_time_changed)
+        from_layout.addWidget(self.from_time_edit)
         self.row_layout.addWidget(from_container)
 
-    def add_to_time_editor(self):
+    def add_to_time_editor(self) -> None:
         to_container = QWidget()
         to_layout = QHBoxLayout(to_container)
         to_layout.setContentsMargins(5, 0, 0, 0)
@@ -60,14 +57,14 @@ class TimeEditRow(QWidget):
         palette.setColor(to_label.foregroundRole(), QColor("#68d9fe"))
         to_label.setPalette(palette)
         to_layout.addWidget(to_label)
-        self.time_edit2 = QTimeEdit()
-        self.time_edit2.timeChanged.connect(self.on_time_changed)
-        self.time_edit2.setDisplayFormat("HH:mm:ss")
-        self.time_edit2.setMinimumHeight(25)
-        to_layout.addWidget(self.time_edit2)
+        self.to_time_edit = QTimeEdit()
+        self.to_time_edit.timeChanged.connect(self.on_to_time_changed)
+        self.to_time_edit.setDisplayFormat("HH:mm:ss")
+        self.to_time_edit.setMinimumHeight(25)
+        to_layout.addWidget(self.to_time_edit)
         self.row_layout.addWidget(to_container)
 
-    def add_buttons(self):
+    def add_buttons(self) -> None:
         button_container = QWidget()
         button_layout = QHBoxLayout(button_container)
         button_layout.setContentsMargins(5, 0, 0, 0)
@@ -84,13 +81,40 @@ class TimeEditRow(QWidget):
         button_layout.addWidget(self.start_button)
         self.row_layout.addWidget(button_container)
 
-    def set_button_to_start(self, button: QPushButton):
+    def set_times(self) -> None:
+        now = QTime.currentTime()
+
+        if self.to_time is not None:
+            t = QTime(0, 0, self.to_time)
+            self.to_time_edit.setTime(t)
+        else:
+            self.to_time_edit.setTime(now)
+
+        if self.from_time is not None:
+            t = QTime(0, 0, self.from_time)
+            self.from_time_edit.setTime(t)
+        else:
+            self.from_time_edit.setTime(now)
+
+    def on_from_time_changed(self, time: QTime) -> None:
+        # Restricts users from specifying a "From" time that precedes the "To" time.
+        to_time = self.to_time_edit.time()
+        if to_time.secsTo(time) > 0:
+            self.from_time_edit.setTime(to_time)
+
+    def on_to_time_changed(self, time: QTime) -> None:
+        # Restricts users from specifying a "To" time that precedes the "From" time.
+        from_time = self.from_time_edit.time()
+        if time.secsTo(from_time) > 0:
+            self.to_time_edit.setTime(from_time)
+
+    def set_button_to_start(self, button: QPushButton) -> None:
         button.setText("Start")
         palette = button.palette()
         palette.setColor(button.foregroundRole(), QColor("#bdf7bc"))
         button.setPalette(palette)
 
-    def set_button_to_stop(self, button: QPushButton):
+    def set_button_to_stop(self, button: QPushButton) -> None:
         button.setText("Stop")
         palette = button.palette()
         palette.setColor(button.foregroundRole(), QColor("#f7d5bc"))
@@ -109,7 +133,7 @@ class TimeEditRow(QWidget):
             self.datetime.rows.remove(self)
             self.deleteLater()
 
-    def toggle_timer(self):
+    def toggle_timer(self) -> None:
         self.datetime.unset_active_timer(self)
 
         if not self.is_active:
@@ -121,10 +145,10 @@ class TimeEditRow(QWidget):
             self.set_button_to_start(self.start_button)
             self.is_active = False
 
-    def add_one_second(self):
-        current_time = self.time_edit2.time()
+    def add_one_second(self) -> None:
+        current_time = self.to_time_edit.time()
         new_time = current_time.addSecs(1)
-        self.time_edit2.setTime(new_time)
+        self.to_time_edit.setTime(new_time)
 
     def keyPressEvent(self, event: QKeyEvent | None) -> None:
         # Add Hotkeys

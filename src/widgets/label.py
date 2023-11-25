@@ -9,7 +9,7 @@ class Label(QLabel):
         self.date_time_display = parent
         self.hover = False
 
-    def enterEvent(self, event):
+    def enterEvent(self, event) -> None:
         target_hour = seconds_to_hhmm(
             self.date_time_display.seconds_remaining
             + self.date_time_display.latest_time_worked
@@ -17,10 +17,10 @@ class Label(QLabel):
         self.setText("To: " + target_hour)
         self.hover = True
 
-    def leaveEvent(self, event):
+    def leaveEvent(self, event) -> None:
         self.hover = False
 
-    def setText(self, args):
+    def setText(self, args) -> None:
         if self.hover:
             return
 

@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QTime
 from src.settings.user_settings import USER_SETTINGS
+from src.time_management.helpers import convert_and_sort_qtime, get_total_time_worked
 from src.time_management.time_dto import TimeDTO
 
 from src.widgets.time_edit_row import TimeEditRow
@@ -30,7 +31,7 @@ class TimespanEditor(QWidget):
         self.rows = []
         self.active_timer = None
 
-    def add_timeedit_container(self):
+    def add_timeedit_container(self) -> None:
         self.main_layout = QVBoxLayout()
         self.timeedit_container = QWidget()
         self.timeedit_row_layout = QVBoxLayout()
@@ -40,7 +41,7 @@ class TimespanEditor(QWidget):
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.main_layout.addItem(spacer)
 
-    def add_button(self):
+    def add_button(self) -> None:
         button_container = QWidget()
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 5, 0, 0)
@@ -52,12 +53,10 @@ class TimespanEditor(QWidget):
         button_container.setLayout(button_layout)
         self.main_layout.addWidget(button_container)
 
-    def add_time_edit_row(self) -> None:
+    def add_time_edit_row(self, from_time=None, to_time=None) -> None:
         if len(self.rows) >= 10:
             return
-        new_row = TimeEditRow(parent=self)
-        new_row.time_edit1.setTime(QTime.currentTime())
-        new_row.time_edit2.setTime(QTime.currentTime())
+        new_row = TimeEditRow(parent=self, from_time=from_time, to_time=to_time)
         self.rows.append(new_row)
         # Insert at the bottom
         self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
@@ -65,7 +64,7 @@ class TimespanEditor(QWidget):
     def set_active_timer(self, timer: TimeEditRow):
         self.active_timer = timer
 
-    def unset_active_timer(self, sender):
+    def unset_active_timer(self, sender) -> None:
         if self.active_timer == None:
             return
 
@@ -74,42 +73,16 @@ class TimespanEditor(QWidget):
 
         self.active_timer = None
 
-    def increment_active_timer(self):
+    def increment_active_timer(self) -> None:
         if self.active_timer == None:
             return
 
         self.active_timer.add_one_second()
 
-    def get_total_time_worked(self) -> QTime:
-        zero_time = QTime(0, 0)
-        row_tuples = [
-            (
-                zero_time.secsTo(row.time_edit1.time()),
-                zero_time.secsTo(row.time_edit2.time()),
-            )
-            for row in self.rows
-        ]
-        sorted_rows = sorted(row_tuples, key=lambda row: row[0])
-
-        minStart = sorted_rows[0][0]
-        maxEnd = sorted_rows[0][0]
-        gap = 0
-
-        for i, row in enumerate(sorted_rows):
-            #  If there is a gap, increment total gap length
-            if sorted_rows[i][0] > maxEnd:
-                gap = gap + sorted_rows[i][0] - maxEnd
-
-            # Update latest end time
-            if sorted_rows[i][1] > maxEnd:
-                maxEnd = sorted_rows[i][1]
-
-        return maxEnd - minStart - gap
-
-    def get_latest_time_worked(self) -> QTime:
+    def get_latest_time_worked(self) -> int:
         zero_time = QTime(0, 0)
         max_time_in_seconds = 0
-        end_times = [zero_time.secsTo(row.time_edit2.time()) for row in self.rows]
+        end_times = [zero_time.secsTo(row.to_time_edit.time()) for row in self.rows]
         for time_in_seconds in end_times:
             if time_in_seconds > max_time_in_seconds:
                 max_time_in_seconds = time_in_seconds
@@ -117,7 +90,8 @@ class TimespanEditor(QWidget):
         return max_time_in_seconds
 
     def get_time_dto(self) -> TimeDTO:
-        total_time_worked = self.get_total_time_worked()
+        sorted_rows = convert_and_sort_qtime(self.rows)
+        total_time_worked = get_total_time_worked(sorted_rows)
         target_hours_worked_in_sedconds = QTime(0, 0).secsTo(
             USER_SETTINGS.get.target_hours_worked
         )
@@ -127,6 +101,18 @@ class TimespanEditor(QWidget):
             latest_time_worked=self.get_latest_time_worked(),
             seconds_remaining=seconds_left_to_work,
         )
+
+    def delete_all_rows(self) -> None:
+        self.active_timer.toggle_timer()
+
+        for row in self.rows:
+            self.rows.remove(row)
+            row.delete_later()
+
+    def load_rows(self) -> None:
+        pass
+        for _ in _:
+            self.add_time_edit_row()
 
 
 if __name__ == "__main__":
