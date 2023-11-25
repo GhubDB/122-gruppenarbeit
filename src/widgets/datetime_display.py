@@ -23,6 +23,7 @@ class DatetimeDisplay(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.seconds_remaining: int = 0
+        self.latest_time_worked: int = 0
 
         self.add_layout()
         self.add_statusbar()

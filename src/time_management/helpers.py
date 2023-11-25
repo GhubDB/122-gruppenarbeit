@@ -39,7 +39,7 @@ def get_total_time_worked(sorted_rows: [[int, int]]) -> int:
     maxEnd = sorted_rows[0][0]
     gap = 0
 
-    for i, row in enumerate(sorted_rows):
+    for i in range(len(sorted_rows)):
         #  If there is a gap, increment total gap length
         if sorted_rows[i][0] > maxEnd:
             gap = gap + sorted_rows[i][0] - maxEnd
