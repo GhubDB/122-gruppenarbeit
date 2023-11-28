@@ -25,7 +25,7 @@ class TimespanEditor(QWidget):
         self.add_timeedit_container()
         self.add_button()
         self.setLayout(self.main_layout)
-        self.add_time_edit_row()
+        self.add_time_edit_row("")
 
     def add_attributes(self):
         self.rows = []
@@ -53,7 +53,7 @@ class TimespanEditor(QWidget):
         button_container.setLayout(button_layout)
         self.main_layout.addWidget(button_container)
 
-    def add_time_edit_row(self, from_time=None, to_time=None) -> None:
+    def add_time_edit_row(self, event, from_time=None, to_time=None) -> None:
         if len(self.rows) >= 10:
             return
         new_row = TimeEditRow(parent=self, from_time=from_time, to_time=to_time)

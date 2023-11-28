@@ -1,6 +1,5 @@
+from datetime import datetime
 from PyQt5.QtCore import QTime
-
-from src.widgets.time_edit_row import TimeEditRow
 
 
 def seconds_to_hhmmss(seconds: int) -> str:
@@ -19,7 +18,7 @@ def seconds_to_hhmm(seconds: int) -> str:
     return time_str
 
 
-def convert_and_sort_qtime(rows: [TimeEditRow]) -> tuple[int, int]:
+def convert_and_sort_qtime(rows) -> tuple[int, int]:
     zero_time = QTime(0, 0)
     row_tuples = (
         (
@@ -49,3 +48,12 @@ def get_total_time_worked(sorted_rows: [[int, int]]) -> int:
             maxEnd = sorted_rows[i][1]
 
     return maxEnd - minStart - gap
+
+
+def get_current_time_in_seconds() -> int:
+    current_time = datetime.now().time()
+    midnight = datetime.combine(datetime.today(), datetime.min.time())
+    elapsed_seconds = (
+        datetime.combine(datetime.today(), current_time) - midnight
+    ).total_seconds()
+    return int(elapsed_seconds)

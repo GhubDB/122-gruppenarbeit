@@ -12,9 +12,16 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QTime
 
+from src.time_management.helpers import get_current_time_in_seconds
+
 
 class TimeEditRow(QWidget):
     def __init__(self, parent, from_time=None, to_time=None):
+        if from_time is None:
+            from_time = get_current_time_in_seconds()
+        if to_time is None:
+            to_time = get_current_time_in_seconds()
+
         super(TimeEditRow, self).__init__()
         self.from_time: int = from_time
         self.to_time: int = to_time
@@ -82,19 +89,12 @@ class TimeEditRow(QWidget):
         self.row_layout.addWidget(button_container)
 
     def set_times(self) -> None:
-        now = QTime.currentTime()
-
-        if self.to_time is not None:
-            t = QTime(0, 0, self.to_time)
-            self.to_time_edit.setTime(t)
-        else:
-            self.to_time_edit.setTime(now)
-
-        if self.from_time is not None:
-            t = QTime(0, 0, self.from_time)
-            self.from_time_edit.setTime(t)
-        else:
-            self.from_time_edit.setTime(now)
+        t = QTime(0, 0)
+        to_time = t.addSecs(self.to_time)
+        self.to_time_edit.setTime(to_time)
+        t = QTime(0, 0)
+        from_time = t.addSecs(self.from_time)
+        self.from_time_edit.setTime(from_time)
 
     def on_from_time_changed(self, time: QTime) -> None:
         # Restricts users from specifying a "From" time that precedes the "To" time.
