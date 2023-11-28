@@ -24,6 +24,7 @@ class DatetimeDisplay(QWidget):
         super().__init__()
         self.seconds_remaining: int = 0
         self.latest_time_worked: int = 0
+        self.current_date: QDate = QDate.currentDate()
 
         self.add_layout()
         self.add_statusbar()
@@ -59,13 +60,24 @@ class DatetimeDisplay(QWidget):
         palette = date.palette()
         palette.setColor(date.foregroundRole(), QColor("#68d9fe"))
         date.setPalette(palette)
-        date_edit = QDateTimeEdit(QDate.currentDate(), calendarPopup=True)
+        date_edit = QDateTimeEdit(self.current_date, calendarPopup=True)
+        date_edit.dateChanged.connect(self.on_date_changed)
         date_edit.setMinimumDate(QDate.currentDate().addDays(-9365))
         date_edit.setMaximumDate(QDate.currentDate().addDays(9365))
         date_edit.setDisplayFormat("dd.MM.yyyy")
         date_edit_layout.addWidget(date)
         date_edit_layout.addWidget(date_edit)
         self.statusbar_layout.addWidget(container)
+
+    def on_date_changed(self, new_date):
+        # zuerst datenbank abfrage
+        self.current_date = new_date
+        #new date objekt umwandeln, damit in db insert möglich
+
+        
+        # Datenbank klasse importieren
+        # Alle rows von diesem Tag
+        
 
     def add_target_workhours_edit(self) -> None:
         container = QWidget()

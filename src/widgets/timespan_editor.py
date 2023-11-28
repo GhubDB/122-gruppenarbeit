@@ -103,8 +103,8 @@ class TimespanEditor(QWidget):
         )
 
     def delete_all_rows(self) -> None:
-        self.active_timer.toggle_timer()
-
+        if self.active_timer.is_active:
+            self.active_timer.toggle_timer()
         for row in self.rows:
             self.rows.remove(row)
             row.delete_later()
