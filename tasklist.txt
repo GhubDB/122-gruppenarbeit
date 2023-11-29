@@ -1,0 +1,8 @@
+UI:
+- Add an always on top button
+- Fix issue where new editors are not appended at the end of the list.
+
+Database:
+- Add timer to timekeeper or task_scheduler in order to save the current timers to the database in regular intervals (i.e. 30s or 60s) 
+- add a user_settings table to the database where settings such as the target workhours are saved
+- Add a method to the init method of the timespan_editor that fetches the timers for the current day from the database when the program is first run

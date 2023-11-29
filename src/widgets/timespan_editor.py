@@ -59,7 +59,7 @@ class TimespanEditor(QWidget):
         new_row = TimeEditRow(parent=self, from_time=from_time, to_time=to_time)
         self.rows.append(new_row)
         # Insert at the bottom
-        self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
+        self.timeedit_row_layout.addWidget(new_row)
 
     def set_active_timer(self, timer: TimeEditRow):
         self.active_timer = timer

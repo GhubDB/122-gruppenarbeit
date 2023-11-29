@@ -1,5 +1,3 @@
-import typing
-from PyQt5 import QtGui
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtCore import QEvent, QObject, Qt
 from PyQt5.QtWidgets import QTimeEdit, qApp
