@@ -14,7 +14,8 @@ class Date(Base):
   __tablename__ = "dates"
   id:Mapped[int] = mapped_column(primary_key=True)
   date_column:Mapped[int] = mapped_column(nullable=False)
-  time_entries:Mapped[List["Time_Entry"]] = relationship(back_populates='Date')
+  time_entries:Mapped[List["Time_Entry"]] = relationship(back_populates='date')
+
 
   def __repr__(self) -> str:
      return f"<ID = (id={self.id}), date={self.date_column}"
@@ -23,8 +24,8 @@ class Time_Entry(Base):
    __tablename__ = "time_entries"
 
    id:Mapped[int] = mapped_column(primary_key=True)
-   time_from:Mapped[int] = mapped_column(nullable=False)
-   time_to:Mapped[int] = mapped_column(nullable=False)
+   time_from:Mapped[int] = mapped_column(Integer, nullable=False)
+   time_to:Mapped[int] = mapped_column(Integer, nullable=False)
    date_id:Mapped[int] = mapped_column(ForeignKey('dates.id'), nullable=False)
    date:Mapped["Date"] = relationship(back_populates='time_entries')
    
