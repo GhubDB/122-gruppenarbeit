@@ -25,5 +25,5 @@ date3 = Date(
   ]
 )
 
-session.add_all([date1])
+session.add_all([date1, date2, date3])
 session.commit()
