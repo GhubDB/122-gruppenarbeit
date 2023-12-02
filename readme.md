@@ -69,22 +69,12 @@ then run task_scheduler.py
 
 ## Security
 
-The Workulator application prioritizes security to ensure the protection of your data. Here are key aspects of our security measures:
+Here's how we maintain a secure environment:
 
-### 1. Code Security
+### Dependency Security
 
-The application code undergoes regular reviews to identify and address any potential security concerns. Our team is dedicated to maintaining a secure codebase.
+We diligently monitor and update the packages used in our application to ensure they are the latest versions.
 
-### 2. User Authentication
 
-User authentication is implemented to safeguard access to sensitive features and data within the application.
+We are committed to providing a trustworthy environment for your work hours tracking. If you have any security-related questions or concerns, please feel free to contact us.
 
-### 3. Hotkey Security
-
-The application incorporates hotkeys for convenience, such as adding time edit rows. These are designed to enhance user experience without compromising security.
-
-### 4. Regular Updates
-
-Keep your application up-to-date to benefit from the latest security enhancements and patches.
-
-We are committed to providing a secure environment for your work hours tracking. If you have any security-related questions or concerns, please don't hesitate to contact us.
