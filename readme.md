@@ -6,19 +6,6 @@ Tracking your work-hours with style</h1>
 
 Welcome to The Workulator, your stylish companion for effortless work hour tracking.
 
-## Purpose
-
-The Workulator simplifies the process of monitoring and managing your work hours, providing a user-friendly interface for timekeeping. Whether you're a freelancer, remote worker, or simply looking to keep precise records of your professional activities, The Workulator is designed to enhance your experience with style and functionality.
-
-## Key Features
-
-- **Intuitive Timekeeping:** Easily track and manage your work hours with a straightforward interface.
-- **Convenient Hotkeys:** Streamline your workflow with customizable hotkeys for quick actions.
-- **Secure and Reliable:** Prioritizing your data's security, The Workulator employs robust measures to ensure the safety of your information.
-
-Get started effortlessly and make your work hours count with The Workulator!
-
-
 ## Installation
 
 Run the following command to install the project:
@@ -78,3 +65,14 @@ We diligently monitor and update the packages used in our application to ensure 
 
 We are committed to providing a trustworthy environment for your work hours tracking. If you have any security-related questions or concerns, please feel free to contact us.
 
+## Purpose
+
+The Workulator simplifies the process of monitoring and managing your work hours, providing a user-friendly interface for timekeeping. Whether you're a freelancer, remote worker, or simply looking to keep precise records of your professional activities, The Workulator is designed to enhance your experience with style and functionality.
+
+## Key Features
+
+- **Intuitive Timekeeping:** Easily track and manage your work hours with a straightforward interface.
+- **Convenient Hotkeys:** Streamline your workflow with customizable hotkeys for quick actions.
+- **Secure and Reliable:** Prioritizing your data's security, The Workulator employs robust measures to ensure the safety of your information.
+
+Get started effortlessly and make your work hours count with The Workulator!
