@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
 class Date(Base):
   __tablename__ = "dates"
   id:Mapped[int] = mapped_column(primary_key=True)
-  date_column:Mapped[int] = mapped_column( unique=True, nullable=False)
+  date_column:Mapped[int] = mapped_column(unique=True, nullable=False)
   time_entries:Mapped[List["Time_Entry"]] = relationship(back_populates='date')
 
 
