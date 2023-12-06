@@ -4,4 +4,5 @@ from sqlalchemy import update
 
 time_from = session.query(Time_Entry).filter_by(id=1).first()
 
-time_from.integer = 111111
+time_from.integer = 11
+session.commit()
