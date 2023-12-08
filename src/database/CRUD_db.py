@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from connect import engine
 from models import Date, Time_Entry
-from sqlalchemy import update, delete, select
+from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 session = Session(bind=engine)
@@ -80,36 +80,3 @@ def delete_time_entry(date, time_from, time_to):
         session.close()
 # delete_time_entry(2026, 17, 22)
 
-
-"""
-Code needed to experiment below
-"""
-# Updating the date works 
-try:
-    stmt = (
-        update(Date)
-        .where(Date.id == 1)
-        .values(date_column=113124)
-    )
-    session.execute(stmt)
-    session.commit()
-except SQLAlchemyError as e:
-    session.rollback()
-    print(f"Error: {e}")
-finally:
-    session.close()
-
-# update a time_entry
-try:
-    stmt = (
-        update(Time_Entry)
-        .where(Time_Entry.id == 1)
-        .values(time_from=12, time_to=13)
-    )
-    session.execute(stmt)
-    session.commit()
-except SQLAlchemyError as e:
-    session.rollback()
-    print(f"Error: {e}")
-finally:
-    session.close()
