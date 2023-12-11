@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
-from models import Date, Time_Entry
 from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy import create_engine
+
+from src.database.models import Time_Entry, Date
 
 engine = create_engine("sqlite:///database.sqlite3", echo=True)
 session = Session(bind=engine)

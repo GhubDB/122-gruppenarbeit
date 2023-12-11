@@ -22,8 +22,9 @@ from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_
 from src.database.models import Date, Time_Entry
 
 class DatetimeDisplay(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, workulator) -> None:
         super().__init__()
+        self.workulator = workulator
         self.seconds_remaining: int = 0
         self.latest_time_worked: int = 0
         self.current_date: QDate = QDate.currentDate()

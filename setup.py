@@ -17,5 +17,6 @@ setup(
         "black",
         "schedule",
         "pytest",
+        "sqlalchemy",
     ],
 )
