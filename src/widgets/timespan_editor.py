@@ -17,6 +17,8 @@ from src.time_management.time_dto import TimeDTO
 
 from src.widgets.time_edit_row import TimeEditRow
 
+from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_from_db
+
 
 class TimespanEditor(QWidget):
     def __init__(self):

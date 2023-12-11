@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
-from connect import engine
 from models import Date, Time_Entry
 from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy import create_engine
 
+engine = create_engine("sqlite:///database.sqlite3", echo=True)
 session = Session(bind=engine)
 
 # This has to work with multiple entries, by now: only one possible
