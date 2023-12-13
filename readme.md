@@ -78,5 +78,4 @@ The Workulator simplifies the process of monitoring and managing your work hours
 Get started effortlessly and make your work hours count with The Workulator!
 
 
-![Workulator-Logo](src\widgets\assets\workulator-pc.jpg)
-
+![Workulator-Logo](src/widgets/assets/workulator-pc.jpg)
