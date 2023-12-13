@@ -76,3 +76,7 @@ The Workulator simplifies the process of monitoring and managing your work hours
 - **Secure and Reliable:** Prioritizing your data's security, The Workulator employs robust measures to ensure the safety of your information.
 
 Get started effortlessly and make your work hours count with The Workulator!
+
+
+![Workulator-Logo](src\widgets\assets\workulator-pc.jpg)
+
