@@ -25,7 +25,7 @@ class AutoFlowchartMaker:
                 self.generate_flowchart(node, output_filename)
 
     def generate_flowchart(self, node, filename):
-        generated_flowchart = Flowchart.from_code(node, field="", inner=True, simplify=False, conds_align=False)
+        generated_flowchart = Flowchart.from_code(node, field=node.name, inner=True, simplify=False, conds_align=False)
         output_html(output_name=filename, field_name='function', flowchart=generated_flowchart.flowchart())
 
 if __name__ == "__main__":

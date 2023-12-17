@@ -8,11 +8,11 @@ from PyQt5.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QPushButton,
-    QTimeEdit,
 )
 from PyQt5.QtCore import QTime
 
 from src.time_management.helpers import get_current_time_in_seconds
+from src.widgets.click_copy_timeedit import ClickCopyTimeedit
 
 
 class TimeEditRow(QWidget):
@@ -46,7 +46,7 @@ class TimeEditRow(QWidget):
         palette.setColor(from_label.foregroundRole(), QColor("#68d9fe"))
         from_label.setPalette(palette)
         from_layout.addWidget(from_label)
-        self.from_time_edit = QTimeEdit()
+        self.from_time_edit = ClickCopyTimeedit()
         self.from_time_edit.setDisplayFormat("HH:mm:ss")
         self.from_time_edit.setMinimumHeight(25)
         self.from_time_edit.timeChanged.connect(self.on_from_time_changed)
@@ -64,7 +64,7 @@ class TimeEditRow(QWidget):
         palette.setColor(to_label.foregroundRole(), QColor("#68d9fe"))
         to_label.setPalette(palette)
         to_layout.addWidget(to_label)
-        self.to_time_edit = QTimeEdit()
+        self.to_time_edit = ClickCopyTimeedit()
         self.to_time_edit.timeChanged.connect(self.on_to_time_changed)
         self.to_time_edit.setDisplayFormat("HH:mm:ss")
         self.to_time_edit.setMinimumHeight(25)
