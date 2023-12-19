@@ -23,7 +23,7 @@ from src.database.CRUD_db import insert_time_entries_into_db
 #from src.database.models import Date, Time_Entry
 
 class DatetimeDisplay(QWidget):
-    def __init__(self, workulator) -> None:
+    def __init__(self, workulator = None) -> None:
         super().__init__()
         self.workulator = workulator
         self.seconds_remaining: int = 0
@@ -42,7 +42,6 @@ class DatetimeDisplay(QWidget):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.setSizePolicy(sizePolicy)
-        # self.setMaximumHeight(210)
         self.setLayout(self.layout)
 
     def add_statusbar(self) -> None:
