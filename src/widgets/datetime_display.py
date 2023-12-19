@@ -18,8 +18,9 @@ from src.time_management.helpers import seconds_to_hhmmss
 from src.time_management.time_dto import TimeDTO
 from src.widgets.label import Label
 
-from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_from_db
-from src.database.models import Date, Time_Entry
+from src.database.CRUD_db import insert_time_entries_into_db
+#from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_from_db
+#from src.database.models import Date, Time_Entry
 
 class DatetimeDisplay(QWidget):
     def __init__(self) -> None:
@@ -76,7 +77,7 @@ class DatetimeDisplay(QWidget):
         self.current_date = new_date
         insert_time_entries_into_db(3, 10, 12)
         #new date objekt umwandeln, damit in db insert möglich
-
+        #convert_and_sort_qtime(self.rowa)
         
         # Datenbank klasse importieren
         # Alle rows von diesem Tag
