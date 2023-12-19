@@ -21,15 +21,17 @@ from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_
 
 
 class TimespanEditor(QWidget):
-    def __init__(self):
+    def __init__(self, workulator):
         super().__init__()
-        self.add_attributes()
+        self.add_attributes(workulator)
         self.add_timeedit_container()
         self.add_button()
         self.setLayout(self.main_layout)
+        self.get_timespans_from_database()
         self.add_time_edit_row()
 
-    def add_attributes(self):
+    def add_attributes(self, workulator):
+        self.workulator = workulator
         self.rows = []
         self.active_timer = None
 
@@ -62,6 +64,12 @@ class TimespanEditor(QWidget):
         self.rows.append(new_row)
         # Insert at the bottom
         self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
+    
+    def add_time_edit_rows(self, time_entries):
+        self.delete_all_rows()
+
+        for time_entry in time_entries:
+            self.add_time_edit_row(from_time=time_entry[0], to_time= time_entry[1])
 
     def set_active_timer(self, timer: TimeEditRow):
         self.active_timer = timer

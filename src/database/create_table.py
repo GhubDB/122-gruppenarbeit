@@ -1,4 +1,4 @@
-from models import Base, Date, Time_Entry
+from models import Base
 from CRUD_db import engine
 
 print("Creating Tables")

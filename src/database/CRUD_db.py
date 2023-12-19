@@ -3,11 +3,14 @@ from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy import create_engine
 
-from src.database.models import Time_Entry, Date
+from src.database.models import Base, Time_Entry, Date
 
 
 engine = create_engine("sqlite:///database.sqlite3", echo=True)
 session = Session(bind=engine)
+
+print("Creating Tables")
+Base.metadata.create_all(bind=engine)
 
 # This has to work with multiple entries, by now: only one possible
 def insert_time_entries_into_db(date, time_from, time_to):
