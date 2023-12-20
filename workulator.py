@@ -82,6 +82,7 @@ class MainWindow(QMainWindow):
 
         return super().keyPressEvent(event)
 
+# database
     def update_timespan_editor(self, time_edit_rows):
         self.save_editor_values_to_database(time_edit_rows)
         self.add_time_edit_rows_to_editor()

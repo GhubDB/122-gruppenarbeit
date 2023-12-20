@@ -10,6 +10,8 @@ from PyQt5.QtWidgets import (
     QDateTimeEdit,
     QTimeEdit,
 )
+
+from datetime import datetime
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import QTime, Qt, QDate
 
@@ -75,12 +77,15 @@ class DatetimeDisplay(QWidget):
     def on_date_changed(self, new_date):
         # zuerst datenbank abfrage
         self.current_date = new_date
-        insert_time_entries_into_db(3, 10, 12)
+
+        python_date = datetime(new_date.year(), new_date.month(), new_date.day()).date()
+
+        insert_time_entries_into_db(python_date, 10, 12)
+        for i in range(10):
+            print("after insert function")
         #new date objekt umwandeln, damit in db insert möglich
         #convert_and_sort_qtime(self.rowa)
         
-        # Datenbank klasse importieren
-        # Alle rows von diesem Tag
         
 
     def add_target_workhours_edit(self) -> None:
