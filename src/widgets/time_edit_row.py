@@ -1,4 +1,5 @@
-from PyQt5.QtGui import QIcon, QColor, QKeyEvent
+import uuid
+from PyQt5.QtGui import QColor, QKeyEvent
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QMessageBox,
@@ -14,12 +15,9 @@ from PyQt5.QtCore import QTime
 
 
 class TimeEditRow(QWidget):
-    def __init__(self, parent, from_time=None, to_time=None):
+    def __init__(self, parent, identifier=None, from_time=None, to_time=None):
         super(TimeEditRow, self).__init__()
-        self.from_time: int = from_time
-        self.to_time: int = to_time
-        self.datetime = parent
-        self.is_active = False
+        self.add_properties(identifier, from_time, to_time, parent)
         self.row_layout = QHBoxLayout()
         self.row_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.row_layout)
@@ -27,6 +25,16 @@ class TimeEditRow(QWidget):
         self.add_to_time_editor()
         self.add_buttons()
         self.set_times()
+
+    def add_properties(self, identifier, from_time, to_time, parent):
+        if identifier == None:
+            identifier = str(uuid.uuid4())
+
+        self.timespan_editor = parent
+        self.identifier: uuid = identifier
+        self.from_time: int = from_time
+        self.to_time: int = to_time
+        self.is_active = False
 
     def add_from_time_editor(self) -> None:
         from_container = QWidget()
@@ -42,7 +50,6 @@ class TimeEditRow(QWidget):
         self.from_time_edit = QTimeEdit()
         self.from_time_edit.setDisplayFormat("HH:mm:ss")
         self.from_time_edit.setMinimumHeight(25)
-        self.from_time_edit.timeChanged.connect(self.on_from_time_changed)
         from_layout.addWidget(self.from_time_edit)
         self.row_layout.addWidget(from_container)
 
@@ -58,7 +65,6 @@ class TimeEditRow(QWidget):
         to_label.setPalette(palette)
         to_layout.addWidget(to_label)
         self.to_time_edit = QTimeEdit()
-        self.to_time_edit.timeChanged.connect(self.on_to_time_changed)
         self.to_time_edit.setDisplayFormat("HH:mm:ss")
         self.to_time_edit.setMinimumHeight(25)
         to_layout.addWidget(self.to_time_edit)
@@ -83,18 +89,21 @@ class TimeEditRow(QWidget):
 
     def set_times(self) -> None:
         now = QTime.currentTime()
+        zero_time = QTime(0, 0)
 
-        if self.to_time is not None:
-            t = QTime(0, 0, self.to_time)
+        if self.to_time is not None and self.from_time is not None:
+            t = zero_time.addSecs(self.to_time)
             self.to_time_edit.setTime(t)
+            t = zero_time.addSecs(self.from_time)
+            self.from_time_edit.setTime(t)
+
         else:
             self.to_time_edit.setTime(now)
-
-        if self.from_time is not None:
-            t = QTime(0, 0, self.from_time)
-            self.from_time_edit.setTime(t)
-        else:
             self.from_time_edit.setTime(now)
+            self.timespan_editor.workulator.save_editor_values_to_database(self)
+
+        self.from_time_edit.timeChanged.connect(self.on_from_time_changed)
+        self.to_time_edit.timeChanged.connect(self.on_to_time_changed)
 
     def on_from_time_changed(self, time: QTime) -> None:
         # Restricts users from specifying a "From" time that precedes the "To" time.
@@ -102,11 +111,15 @@ class TimeEditRow(QWidget):
         if to_time.secsTo(time) > 0:
             self.from_time_edit.setTime(to_time)
 
+        self.timespan_editor.workulator.save_editor_values_to_database(self)
+
     def on_to_time_changed(self, time: QTime) -> None:
         # Restricts users from specifying a "To" time that precedes the "From" time.
         from_time = self.from_time_edit.time()
         if time.secsTo(from_time) > 0:
             self.to_time_edit.setTime(from_time)
+
+        self.timespan_editor.workulator.save_editor_values_to_database(self)
 
     def set_button_to_start(self, button: QPushButton) -> None:
         button.setText("Start")
@@ -129,16 +142,20 @@ class TimeEditRow(QWidget):
             QMessageBox.No,
         )
 
-        if reply == QMessageBox.Yes and not self.is_active:
-            self.datetime.rows.remove(self)
+        if self.is_active:
+            self.timespan_editor.toggle_timer()
+
+        if reply == QMessageBox.Yes:
+            self.timespan_editor.workulator.database.delete_time_entry(self.identifier)
+            self.timespan_editor.rows.remove(self)
             self.deleteLater()
 
     def toggle_timer(self) -> None:
-        self.datetime.unset_active_timer(self)
+        self.timespan_editor.unset_active_timer(self)
 
         if not self.is_active:
             self.set_button_to_stop(self.start_button)
-            self.datetime.set_active_timer(self)
+            self.timespan_editor.set_active_timer(self)
             self.is_active = True
 
         else:

@@ -1,6 +1,5 @@
-from PyQt5.QtCore import QTime
-
-from src.widgets.time_edit_row import TimeEditRow
+from PyQt5.QtCore import QTime, QDate
+from datetime import datetime
 
 
 def seconds_to_hhmmss(seconds: int) -> str:
@@ -19,7 +18,16 @@ def seconds_to_hhmm(seconds: int) -> str:
     return time_str
 
 
-def convert_and_sort_qtime(rows: [TimeEditRow]) -> tuple[int, int]:
+def convert_qdate_to_datetime(date: QDate):
+    return datetime(date.year(), date.month(), date.day()).date()
+
+
+def convert_qtime_to_int(qtime: QTime):
+    zero_time = QTime(0, 0)
+    return zero_time.secsTo(qtime.time())
+
+
+def convert_and_sort_qtime(rows) -> tuple[int, int]:
     zero_time = QTime(0, 0)
     row_tuples = (
         (

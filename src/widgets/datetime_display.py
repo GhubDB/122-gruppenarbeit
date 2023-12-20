@@ -11,21 +11,17 @@ from PyQt5.QtWidgets import (
     QTimeEdit,
 )
 
-from datetime import datetime
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import QTime, Qt, QDate
 
 from src.settings.user_settings import USER_SETTINGS
-from src.time_management.helpers import seconds_to_hhmmss
+from src.time_management.helpers import convert_qdate_to_datetime, seconds_to_hhmmss
 from src.time_management.time_dto import TimeDTO
 from src.widgets.label import Label
 
-from src.database.CRUD_db import insert_time_entries_into_db
-#from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_from_db
-#from src.database.models import Date, Time_Entry
 
 class DatetimeDisplay(QWidget):
-    def __init__(self, workulator = None) -> None:
+    def __init__(self, workulator=None) -> None:
         super().__init__()
         self.workulator = workulator
         self.seconds_remaining: int = 0
@@ -65,28 +61,18 @@ class DatetimeDisplay(QWidget):
         palette = date.palette()
         palette.setColor(date.foregroundRole(), QColor("#68d9fe"))
         date.setPalette(palette)
-        date_edit = QDateTimeEdit(self.current_date, calendarPopup=True)
-        date_edit.dateChanged.connect(self.on_date_changed)
-        date_edit.setMinimumDate(QDate.currentDate().addDays(-9365))
-        date_edit.setMaximumDate(QDate.currentDate().addDays(9365))
-        date_edit.setDisplayFormat("dd.MM.yyyy")
+        self.date_edit = QDateTimeEdit(self.current_date, calendarPopup=True)
+        self.date_edit.dateChanged.connect(self.on_date_changed)
+        self.date_edit.setMinimumDate(QDate.currentDate().addDays(-9365))
+        self.date_edit.setMaximumDate(QDate.currentDate().addDays(9365))
+        self.date_edit.setDisplayFormat("dd.MM.yyyy")
         date_edit_layout.addWidget(date)
-        date_edit_layout.addWidget(date_edit)
+        date_edit_layout.addWidget(self.date_edit)
         self.statusbar_layout.addWidget(container)
 
     def on_date_changed(self, new_date):
-        # zuerst datenbank abfrage
-        self.current_date = new_date
-
-        python_date = datetime(new_date.year(), new_date.month(), new_date.day()).date()
-
-        insert_time_entries_into_db(python_date, 10, 12)
-        for i in range(10):
-            print("after insert function")
-        #new date objekt umwandeln, damit in db insert möglich
-        #convert_and_sort_qtime(self.rowa)
-        
-        
+        converted_date = convert_qdate_to_datetime(new_date)
+        self.workulator.add_time_edit_rows_to_editor(converted_date)
 
     def add_target_workhours_edit(self) -> None:
         container = QWidget()
@@ -94,7 +80,6 @@ class DatetimeDisplay(QWidget):
         target_workhours_layout.setContentsMargins(0, 0, 0, 0)
         container.setLayout(target_workhours_layout)
         target_hours = QLabel("Target Hours:")
-        # target_hours.setStyleSheet("QLabel: {color: #68d9fe;} ")
         palette = target_hours.palette()
         palette.setColor(target_hours.foregroundRole(), QColor("#68d9fe"))
         target_hours.setPalette(palette)

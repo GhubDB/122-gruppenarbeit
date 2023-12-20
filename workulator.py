@@ -1,6 +1,4 @@
 import sys
-import typing
-from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import (
@@ -12,10 +10,13 @@ from PyQt5.QtWidgets import (
     QWidget,
     QStackedWidget,
 )
-from src.database.CRUD_db import insert_time_entries_into_db, read_time_entries_from_db
+from src.database.CRUD_db import Database
 from src.settings.user_settings import USER_SETTINGS
 from src.stylesheets.stylesheets import Stylesheets
-from src.time_management.helpers import convert_and_sort_qtime
+from src.time_management.helpers import (
+    convert_qdate_to_datetime,
+    convert_qtime_to_int,
+)
 from src.time_management.timekeeper import Timekeeper
 from src.widgets.datetime_display import DatetimeDisplay
 from src.widgets.time_edit_row import TimeEditRow
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.settings = USER_SETTINGS
+        self.add_database()
         self.setup_central_window()
         self.add_splitters()
         self.add_datetime_display()
@@ -60,18 +62,23 @@ class MainWindow(QMainWindow):
         container_layout.addWidget(self.timespan_editor)
         self.timespan_editor_container.setLayout(container_layout)
         self.app_container_layout.addWidget(self.timespan_editor_container)
+        converted_date = self.get_current_date()
+        self.add_time_edit_rows_to_editor(converted_date)
 
     def add_datetime_display(self) -> None:
         self.datetime_display_container = QWidget()
         container_layout = QVBoxLayout()
         container_layout.setContentsMargins(0, 0, 0, 0)
-        self.datetime = DatetimeDisplay(self)
-        container_layout.addWidget(self.datetime)
+        self.datetime_display = DatetimeDisplay(self)
+        container_layout.addWidget(self.datetime_display)
         self.datetime_display_container.setLayout(container_layout)
         self.app_container_layout.addWidget(self.datetime_display_container)
 
     def add_timekeeper(self):
-        self.timekeeper = Timekeeper(self.timespan_editor, self.datetime)
+        self.timekeeper = Timekeeper(self.timespan_editor, self.datetime_display)
+
+    def add_database(self):
+        self.database = Database()
 
     def keyPressEvent(self, event: QKeyEvent | None) -> None:
         # Add Hotkeys
@@ -82,23 +89,23 @@ class MainWindow(QMainWindow):
 
         return super().keyPressEvent(event)
 
-# database
-    def update_timespan_editor(self, time_edit_rows):
-        self.save_editor_values_to_database(time_edit_rows)
-        self.add_time_edit_rows_to_editor()
+    def get_current_date(self):
+        current_date = self.datetime_display.date_edit.date()
+        return convert_qdate_to_datetime(current_date)
 
-    def save_editor_values_to_database(self, time_edit_rows):
-        time_values_to_save = convert_and_sort_qtime(time_edit_rows)
-        insert_time_entries_into_db(time_values_to_save )
+    # database
+    def save_editor_values_to_database(self, time_edit_row: TimeEditRow):
+        converted_date = self.get_current_date()
+        self.database.insert_time_entry_into_db(
+            converted_date,
+            time_edit_row.identifier,
+            convert_qtime_to_int(time_edit_row.from_time_edit),
+            convert_qtime_to_int(time_edit_row.to_time_edit),
+        )
 
-    def add_time_edit_rows_to_editor(self):
-        time_entries = read_time_entries_from_db()
+    def add_time_edit_rows_to_editor(self, date):
+        time_entries = self.database.read_time_entries_from_db(date)
         self.timespan_editor.add_time_edit_rows(time_entries)
-
-    def closeEvent(self, a0) -> None:
-        # Save all editor values to database on app close
-        self.save_editor_values_to_database(self.timespan_editor.rows)
-        return super().closeEvent(a0)
 
 
 if __name__ == "__main__":
