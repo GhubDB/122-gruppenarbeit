@@ -24,8 +24,9 @@ from src.widgets.timespan_editor import TimespanEditor
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, app):
         super(MainWindow, self).__init__()
+        self.app = app
         self.settings = USER_SETTINGS
         self.add_database()
         self.setup_central_window()
@@ -33,6 +34,9 @@ class MainWindow(QMainWindow):
         self.add_datetime_display()
         self.add_timespan_editor()
         self.add_timekeeper()
+
+    def add_database(self):
+        self.database = Database()
 
     def setup_central_window(self) -> None:
         self.setObjectName("Central Window")
@@ -77,9 +81,6 @@ class MainWindow(QMainWindow):
     def add_timekeeper(self):
         self.timekeeper = Timekeeper(self.timespan_editor, self.datetime_display)
 
-    def add_database(self):
-        self.database = Database()
-
     def keyPressEvent(self, event: QKeyEvent | None) -> None:
         # Add Hotkeys
         mods = event.modifiers()
@@ -111,7 +112,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyleSheet(Stylesheets.elegantdark)
-    win = MainWindow()
+    win = MainWindow(app)
     win.resize(420, 250)
     win.show()
     sys.exit(app.exec_())

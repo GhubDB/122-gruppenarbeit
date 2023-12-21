@@ -142,10 +142,10 @@ class TimeEditRow(QWidget):
             QMessageBox.No,
         )
 
-        if self.is_active:
-            self.timespan_editor.toggle_timer()
-
         if reply == QMessageBox.Yes:
+            if self.is_active:
+                self.timespan_editor.active_timer.toggle_timer()
+
             self.timespan_editor.workulator.database.delete_time_entry(self.identifier)
             self.timespan_editor.rows.remove(self)
             self.deleteLater()

@@ -87,7 +87,10 @@ class Database:
 
             # Query the time entries for the specified date
             selected_time_entries = (
-                session.query(TimeEntry).filter_by(date_id=date_id).all()
+                session.query(TimeEntry)
+                .filter_by(date_id=date_id)
+                .order_by(TimeEntry.from_time.asc())
+                .all()
             )
             return selected_time_entries
 

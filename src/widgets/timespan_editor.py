@@ -66,12 +66,16 @@ class TimespanEditor(QWidget):
         )
         self.rows.append(new_row)
         # Insert at the bottom
-        self.timeedit_row_layout.insertWidget(len(self.main_layout) - 1, new_row)
+        self.timeedit_row_layout.addWidget(new_row)
 
     def add_time_edit_rows(self, time_entries: [TimeEntry] = None):
         self.delete_all_rows()
+        self.workulator.app.processEvents()
+
         if time_entries is not None and len(time_entries) > 0:
+            # We have entries for this day in the database
             for time_entry in time_entries:
+                print(time_entry.from_time)
                 self.add_time_edit_row(
                     identifier=time_entry.identifier,
                     from_time=time_entry.from_time,
@@ -79,7 +83,17 @@ class TimespanEditor(QWidget):
                 )
 
         else:
+            # We do not have an entry in the database, so we add one editor
             self.add_time_edit_row()
+
+    def delete_all_rows(self) -> None:
+        if self.active_timer and self.active_timer.is_active:
+            self.active_timer.toggle_timer()
+
+        for row in self.rows:
+            row.deleteLater()
+
+        self.rows.clear()
 
     def set_active_timer(self, timer: TimeEditRow):
         self.active_timer = timer
@@ -123,19 +137,6 @@ class TimespanEditor(QWidget):
             latest_time_worked=self.get_latest_time_worked(),
             seconds_remaining=seconds_left_to_work,
         )
-
-    def delete_all_rows(self) -> None:
-        if self.active_timer and self.active_timer.is_active:
-            self.active_timer.toggle_timer()
-
-        for row in self.rows:
-            self.rows.remove(row)
-            row.deleteLater()
-
-    def load_rows(self) -> None:
-        pass
-        for _ in _:
-            self.add_time_edit_row()
 
 
 if __name__ == "__main__":
