@@ -10,20 +10,23 @@ from PyQt5.QtWidgets import (
     QDateTimeEdit,
     QTimeEdit,
 )
+
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import QTime, Qt, QDate
 
 from src.settings.user_settings import USER_SETTINGS
-from src.time_management.helpers import seconds_to_hhmmss
+from src.time_management.helpers import convert_qdate_to_datetime, seconds_to_hhmmss
 from src.time_management.time_dto import TimeDTO
 from src.widgets.label import Label
 
 
 class DatetimeDisplay(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, workulator=None) -> None:
         super().__init__()
+        self.workulator = workulator
         self.seconds_remaining: int = 0
         self.latest_time_worked: int = 0
+        self.current_date: QDate = QDate.currentDate()
 
         self.add_layout()
         self.add_statusbar()
@@ -37,7 +40,6 @@ class DatetimeDisplay(QWidget):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.setSizePolicy(sizePolicy)
-        # self.setMaximumHeight(210)
         self.setLayout(self.layout)
 
     def add_statusbar(self) -> None:
@@ -59,13 +61,18 @@ class DatetimeDisplay(QWidget):
         palette = date.palette()
         palette.setColor(date.foregroundRole(), QColor("#68d9fe"))
         date.setPalette(palette)
-        date_edit = QDateTimeEdit(QDate.currentDate(), calendarPopup=True)
-        date_edit.setMinimumDate(QDate.currentDate().addDays(-9365))
-        date_edit.setMaximumDate(QDate.currentDate().addDays(9365))
-        date_edit.setDisplayFormat("dd.MM.yyyy")
+        self.date_edit = QDateTimeEdit(self.current_date, calendarPopup=True)
+        self.date_edit.dateChanged.connect(self.on_date_changed)
+        self.date_edit.setMinimumDate(QDate.currentDate().addDays(-9365))
+        self.date_edit.setMaximumDate(QDate.currentDate().addDays(9365))
+        self.date_edit.setDisplayFormat("dd.MM.yyyy")
         date_edit_layout.addWidget(date)
-        date_edit_layout.addWidget(date_edit)
+        date_edit_layout.addWidget(self.date_edit)
         self.statusbar_layout.addWidget(container)
+
+    def on_date_changed(self, new_date):
+        converted_date = convert_qdate_to_datetime(new_date)
+        self.workulator.add_time_edit_rows_to_editor(converted_date)
 
     def add_target_workhours_edit(self) -> None:
         container = QWidget()
@@ -73,7 +80,6 @@ class DatetimeDisplay(QWidget):
         target_workhours_layout.setContentsMargins(0, 0, 0, 0)
         container.setLayout(target_workhours_layout)
         target_hours = QLabel("Target Hours:")
-        # target_hours.setStyleSheet("QLabel: {color: #68d9fe;} ")
         palette = target_hours.palette()
         palette.setColor(target_hours.foregroundRole(), QColor("#68d9fe"))
         target_hours.setPalette(palette)

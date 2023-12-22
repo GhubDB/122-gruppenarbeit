@@ -1,5 +1,5 @@
+from PyQt5.QtCore import QTime, QDate
 from datetime import datetime
-from PyQt5.QtCore import QTime
 
 
 def seconds_to_hhmmss(seconds: int) -> str:
@@ -16,6 +16,15 @@ def seconds_to_hhmm(seconds: int) -> str:
     h, m = divmod(m, 60)
     time_str = "{:02}:{:02}".format(int(h), int(m))
     return time_str
+
+
+def convert_qdate_to_datetime(date: QDate):
+    return datetime(date.year(), date.month(), date.day()).date()
+
+
+def convert_qtime_to_int(qtime: QTime):
+    zero_time = QTime(0, 0)
+    return zero_time.secsTo(qtime.time())
 
 
 def convert_and_sort_qtime(rows) -> tuple[int, int]:

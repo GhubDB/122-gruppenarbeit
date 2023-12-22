@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
 )
 from PyQt5.QtCore import QTime
+from src.database.models import TimeEntry
 from src.settings.user_settings import USER_SETTINGS
 from src.time_management.helpers import convert_and_sort_qtime, get_total_time_worked
 from src.time_management.time_dto import TimeDTO
@@ -19,15 +20,16 @@ from src.widgets.time_edit_row import TimeEditRow
 
 
 class TimespanEditor(QWidget):
-    def __init__(self):
+    def __init__(self, workulator=None):
         super().__init__()
-        self.add_attributes()
+        self.add_attributes(workulator)
         self.add_timeedit_container()
         self.add_button()
         self.setLayout(self.main_layout)
-        self.add_time_edit_row("")
+        self.add_time_edit_rows()
 
-    def add_attributes(self):
+    def add_attributes(self, workulator):
+        self.workulator = workulator
         self.rows = []
         self.active_timer = None
 
@@ -48,18 +50,50 @@ class TimespanEditor(QWidget):
         self.add_button = QPushButton("Add Timer")
         self.add_button.setToolTip("Ctrl / Cmd + N")
         self.add_button.setMinimumHeight(35)
-        self.add_button.clicked.connect(self.add_time_edit_row)
+        self.add_button.clicked.connect(self.trigger_add_time_edit_row)
         button_layout.addWidget(self.add_button)
         button_container.setLayout(button_layout)
         self.main_layout.addWidget(button_container)
 
-    def add_time_edit_row(self, event, from_time=None, to_time=None) -> None:
+    def trigger_add_time_edit_row(self):
+        self.add_time_edit_row()
+
+    def add_time_edit_row(self, identifier=None, from_time=None, to_time=None) -> None:
         if len(self.rows) >= 10:
             return
-        new_row = TimeEditRow(parent=self, from_time=from_time, to_time=to_time)
+        new_row = TimeEditRow(
+            parent=self, identifier=identifier, from_time=from_time, to_time=to_time
+        )
         self.rows.append(new_row)
         # Insert at the bottom
         self.timeedit_row_layout.addWidget(new_row)
+
+    def add_time_edit_rows(self, time_entries: [TimeEntry] = None):
+        self.delete_all_rows()
+        self.workulator.app.processEvents()
+
+        if time_entries is not None and len(time_entries) > 0:
+            # We have entries for this day in the database
+            for time_entry in time_entries:
+                print(time_entry.from_time)
+                self.add_time_edit_row(
+                    identifier=time_entry.identifier,
+                    from_time=time_entry.from_time,
+                    to_time=time_entry.to_time,
+                )
+
+        else:
+            # We do not have an entry in the database, so we add one editor
+            self.add_time_edit_row()
+
+    def delete_all_rows(self) -> None:
+        if self.active_timer and self.active_timer.is_active:
+            self.active_timer.toggle_timer()
+
+        for row in self.rows:
+            row.deleteLater()
+
+        self.rows.clear()
 
     def set_active_timer(self, timer: TimeEditRow):
         self.active_timer = timer
@@ -83,6 +117,7 @@ class TimespanEditor(QWidget):
         zero_time = QTime(0, 0)
         max_time_in_seconds = 0
         end_times = [zero_time.secsTo(row.to_time_edit.time()) for row in self.rows]
+
         for time_in_seconds in end_times:
             if time_in_seconds > max_time_in_seconds:
                 max_time_in_seconds = time_in_seconds
@@ -96,23 +131,12 @@ class TimespanEditor(QWidget):
             USER_SETTINGS.get.target_hours_worked
         )
         seconds_left_to_work = target_hours_worked_in_sedconds - total_time_worked
+
         return TimeDTO(
             total_time_worked=total_time_worked,
             latest_time_worked=self.get_latest_time_worked(),
             seconds_remaining=seconds_left_to_work,
         )
-
-    def delete_all_rows(self) -> None:
-        self.active_timer.toggle_timer()
-
-        for row in self.rows:
-            self.rows.remove(row)
-            row.delete_later()
-
-    def load_rows(self) -> None:
-        pass
-        for _ in _:
-            self.add_time_edit_row()
 
 
 if __name__ == "__main__":
