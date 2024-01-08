@@ -1,4 +1,5 @@
 import sys
+import PyQt5
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import (

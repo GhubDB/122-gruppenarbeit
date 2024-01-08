@@ -8,6 +8,4 @@ class ClickCopyTimeedit(QTimeEdit):
         super().__init__(parent)
 
     def eventFilter(self, a0: QObject | None, a1: QEvent | None) -> bool:
-        print(a0)
-        print(a1)
         return super().eventFilter(a0, a1)

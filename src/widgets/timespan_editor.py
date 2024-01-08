@@ -26,7 +26,6 @@ class TimespanEditor(QWidget):
         self.add_timeedit_container()
         self.add_button()
         self.setLayout(self.main_layout)
-        self.add_time_edit_rows()
 
     def add_attributes(self, workulator):
         self.workulator = workulator
@@ -75,7 +74,6 @@ class TimespanEditor(QWidget):
         if time_entries is not None and len(time_entries) > 0:
             # We have entries for this day in the database
             for time_entry in time_entries:
-                print(time_entry.from_time)
                 self.add_time_edit_row(
                     identifier=time_entry.identifier,
                     from_time=time_entry.from_time,

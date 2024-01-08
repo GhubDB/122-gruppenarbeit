@@ -18,5 +18,6 @@ setup(
         "schedule",
         "pytest",
         "sqlalchemy",
+        "sip",
     ],
 )

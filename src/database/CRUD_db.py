@@ -24,9 +24,6 @@ class Database:
                 session, date_entry, identifier, from_time, to_time
             )
 
-            print(f"Time entries added to the existing record for date {date}.")
-            print("Time entries inserted successfully.")
-
         except IntegrityError as e:
             session.rollback()
             print(f"Error: {e}")
@@ -107,7 +104,6 @@ class Database:
             stmt = delete(TimeEntry).where((TimeEntry.identifier == identifier))
             session.execute(stmt)
             session.commit()
-            print(f"Time entry deleted successfully.")
 
         except SQLAlchemyError as e:
             session.rollback()
