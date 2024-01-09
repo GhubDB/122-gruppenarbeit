@@ -9,7 +9,7 @@ from src.database.models import Base, TimeEntry, Date
 
 class Database:
     def __init__(self):
-        self.engine = create_engine("sqlite:///database.sqlite3", echo=True)
+        self.engine = create_engine("sqlite:///workulator_database.sqlite3")
         self.Session: Session = sessionmaker(bind=self.engine)
         Base.metadata.create_all(bind=self.engine)
 
