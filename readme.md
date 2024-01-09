@@ -25,10 +25,10 @@ Run the following command to install the package in development mode:
 
 ## Compiling the application
 
-Navigate to the root folder of the project in your terminal and install pyinstaller by executing the command:
+Install the project, then navigate to the root folder of the project in your terminal and install pyinstaller by executing the command:
 
 ```text
-    pip install pyinstaller
+    pip install pyinstaller==5.13.2
 ```
 
 Build the executable by running:
@@ -37,7 +37,7 @@ Build the executable by running:
     pyinstaller --onefile workulator.py --noconsole
 ```
 
-The executable file can now be found in your dist folder.
+The executable file "workulator.exe" can now be found in your dist folder.
 
 ## Performing manual backups
 
