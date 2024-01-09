@@ -43,17 +43,6 @@ Build the executable by running:
 
 The executable file "workulator.exe" can now be found in your dist folder.
 
-## Performing manual backups
-
-Navigate to /src/database in your terminal and execute the following command:
-
-```
-    chmod +x backup-bash.sh  
-```
-
-then run task_scheduler.py
-
-
 ## Security
 
 Here's how we maintain a secure environment:
