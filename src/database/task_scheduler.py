@@ -6,6 +6,7 @@ import time
 
 
 def backup_database():
+    # Generate the filename with timestamp
     timestamp = time.strftime("%H_%M_%S_%d_%m_%Y")
     filename = f"database_backup_{timestamp}.sqlite3"
 
@@ -17,6 +18,7 @@ def backup_database():
         result = f"Backup failed: {str(e)}"
 
     print(result)
+    return result
 
 
 def schedule_backup():
