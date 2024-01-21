@@ -1,4 +1,5 @@
 import datetime
+import re
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -26,8 +27,13 @@ class Database:
 
         except IntegrityError as e:
             session.rollback()
+
+            if re.search(r"unique constraint violation", e, re.IGNORECASE):
+                print(
+                    "Failed to insert time entries due to a unique constraint violation."
+                )
             print(f"Error: {e}")
-            print("Failed to insert time entries due to a unique constraint violation.")
+
         except Exception as e:
             session.rollback()
             print(f"Error: {e}")
@@ -93,6 +99,9 @@ class Database:
 
         except SQLAlchemyError as e:
             session.rollback()
+            if re.search(r"Invalid Request Error", e, re.IGNORECASE):
+                print("Invalid request:")
+
             print(f"Error: {e}")
 
         finally:
