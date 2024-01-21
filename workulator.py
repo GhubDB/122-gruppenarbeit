@@ -1,5 +1,4 @@
 import sys
-import PyQt5
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import (
@@ -12,6 +11,7 @@ from PyQt5.QtWidgets import (
     QStackedWidget,
 )
 from src.database.CRUD_db import Database
+from src.database.task_scheduler import start_backup_scheduler
 from src.settings.user_settings import USER_SETTINGS
 from src.stylesheets.stylesheets import Stylesheets
 from src.time_management.helpers import (
@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):
         self.add_datetime_display()
         self.add_timespan_editor()
         self.add_timekeeper()
+        self.add_task_scheduler()
 
     def add_database(self):
         self.database = Database()
@@ -81,6 +82,10 @@ class MainWindow(QMainWindow):
 
     def add_timekeeper(self):
         self.timekeeper = Timekeeper(self.timespan_editor, self.datetime_display)
+
+    def add_task_scheduler(self):
+        if self.settings.user_settins.backup_database:
+            start_backup_scheduler()
 
     def keyPressEvent(self, event: QKeyEvent | None) -> None:
         # Add Hotkeys

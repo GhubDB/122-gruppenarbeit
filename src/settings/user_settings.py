@@ -5,9 +5,10 @@ from PyQt5.QtCore import QTime
 @dataclass
 class UserSettings:
     target_hours_worked: QTime
+    backup_database: bool
 
 
-DEFAULT_SETTINGS = UserSettings(target_hours_worked=QTime(8, 0))
+DEFAULT_SETTINGS = UserSettings(target_hours_worked=QTime(8, 0), backup_database=False)
 
 
 class SettingsStore:
