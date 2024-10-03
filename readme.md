@@ -24,6 +24,8 @@ It is recommended that the project is installed in a virtual environment.
 Run the following command to install the package in development mode:
 
 ```text
+    python -m venv venv 
+    venv\Scripts\activate 
     pip install -e /path-to-directory-that-has-the-setup.py-file
 ```
 
